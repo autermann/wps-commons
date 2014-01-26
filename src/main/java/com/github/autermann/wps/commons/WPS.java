@@ -155,7 +155,7 @@ public class WPS {
         repo.setClassName(repoClass.getName());
         repo.setName(repoClass.getName());
         if (properties != null) {
-            for (String property : properties.keys()) {
+            for (String property : properties.keySet()) {
                 for (String value : properties.get(property)) {
                     Property p = repo.addNewProperty();
                     p.setActive(true);
