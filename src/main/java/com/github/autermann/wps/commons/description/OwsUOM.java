@@ -34,7 +34,7 @@ public class OwsUOM {
         this(null, value);
     }
 
-    public Optional<String> getCodeSpace() {
+    public Optional<String> getReference() {
         return Optional.fromNullable(this.reference);
     }
 
@@ -57,13 +57,13 @@ public class OwsUOM {
         }
         final OwsUOM that = (OwsUOM) obj;
         return Objects.equal(this.getValue(), that.getValue()) &&
-               Objects.equal(this.getCodeSpace(), that.getCodeSpace());
+               Objects.equal(this.getReference(), that.getReference());
     }
 
     @Override
     public String toString() {
         return Objects.toStringHelper(this).omitNullValues()
-                .add("reference", getCodeSpace().orNull())
+                .add("reference", getReference().orNull())
                 .add("value", getValue())
                 .toString();
     }
