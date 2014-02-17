@@ -29,6 +29,7 @@ import net.opengis.wps.x100.ComplexDataCombinationType;
 import net.opengis.wps.x100.ComplexDataCombinationsType;
 import net.opengis.wps.x100.ComplexDataDescriptionType;
 import net.opengis.wps.x100.ComplexDataType;
+import net.opengis.wps.x100.DocumentOutputDefinitionType;
 import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.InputReferenceType;
 import net.opengis.wps.x100.OutputDefinitionType;
@@ -240,6 +241,18 @@ public class Format {
         }
         if (hasSchema()) {
             irt.setSchema(getSchema().get());
+        }
+    }
+
+    public void encodeTo(DocumentOutputDefinitionType dodt) {
+        if (hasMimeType()) {
+            dodt.setMimeType(getMimeType().get());
+        }
+        if (hasEncoding()) {
+            dodt.setEncoding(getEncoding().get());
+        }
+        if (hasSchema()) {
+            dodt.setSchema(getSchema().get());
         }
     }
 
