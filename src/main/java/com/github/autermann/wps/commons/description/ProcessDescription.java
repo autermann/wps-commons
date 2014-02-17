@@ -38,11 +38,22 @@ public class ProcessDescription implements Identifiable<OwsCodeType> {
     private final OwsCodeType identifier;
     private final Map<OwsCodeType, ProcessInputDescription> inputs;
     private final Map<OwsCodeType, ProcessOutputDescription> outputs;
+    private final boolean storeSupported;
+    private final boolean statusSupported;
 
     public ProcessDescription(OwsCodeType identifier) {
-        this.identifier = identifier;
+        this(identifier, false, false);
+
+    }
+
+    public ProcessDescription(OwsCodeType identifier,
+                              boolean storeSupported,
+                              boolean statusSupported) {
         this.inputs = new HashMap<>();
         this.outputs = new HashMap<>();
+        this.identifier = identifier;
+        this.storeSupported = storeSupported;
+        this.statusSupported = statusSupported;
     }
 
     @Override
@@ -74,9 +85,18 @@ public class ProcessDescription implements Identifiable<OwsCodeType> {
         return Collections.unmodifiableSet(outputs.keySet());
     }
 
+    public boolean isStoreSupported() {
+        return storeSupported;
+    }
+
+    public boolean isStatusSupported() {
+        return statusSupported;
+    }
+
     public static ProcessDescription of(ProcessDescriptionType xb) {
         OwsCodeType id = OwsCodeType.of(xb.getIdentifier());
-        ProcessDescription pd = new ProcessDescription(id);
+        ProcessDescription pd = new ProcessDescription(id, xb
+                .getStoreSupported(), xb.getStatusSupported());
         for (InputDescriptionType xbInputDescription : xb.getDataInputs().getInputArray()) {
             pd.addInput(ProcessInputDescription.of(xbInputDescription));
         }
