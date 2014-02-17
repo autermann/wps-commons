@@ -1,4 +1,4 @@
-package com.github.autermann.wps.commons;
+package com.github.autermann.wps.commons.description;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.emptyToNull;
@@ -68,7 +68,8 @@ public class OwsCodeType {
     }
 
     public static OwsCodeType of(CodeType xbCodeType) {
-        return new OwsCodeType(xbCodeType.getCodeSpace(), xbCodeType.getStringValue());
+        return new OwsCodeType(xbCodeType.getCodeSpace(),
+                               xbCodeType.getStringValue());
     }
 
 }
