@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Set;
 
-
 import com.github.autermann.wps.commons.Format;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
@@ -33,5 +32,4 @@ public class ComplexInputDescription extends ProcessInputDescription {
     public Format getDefaultFormat() {
         return defaultFormat;
     }
-
 }

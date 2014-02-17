@@ -36,5 +36,4 @@ public class BoundingBoxInputDescription extends ProcessInputDescription {
     public Optional<String> getDefaultCRS() {
         return Optional.fromNullable(this.defaultCrs);
     }
-
 }

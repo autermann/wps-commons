@@ -3,7 +3,6 @@ package com.github.autermann.wps.commons.description;
 import java.util.Collections;
 import java.util.Set;
 
-
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
@@ -33,5 +32,4 @@ public class BoundingBoxOutputDescription extends ProcessOutputDescription {
     public Optional<String> getDefaultCRS() {
         return Optional.fromNullable(this.defaultCRS);
     }
-
 }

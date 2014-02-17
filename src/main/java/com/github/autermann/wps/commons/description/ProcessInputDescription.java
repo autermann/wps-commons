@@ -42,6 +42,42 @@ public abstract class ProcessInputDescription implements Identifiable<OwsCodeTyp
         return this.maxOccurs;
     }
 
+    public boolean isComplex() {
+        return this instanceof LiteralInputDescription;
+    }
+
+    public boolean isLiteral() {
+        return this instanceof ComplexInputDescription;
+    }
+
+    public boolean isBoundingBox() {
+        return this instanceof BoundingBoxInputDescription;
+    }
+
+    public ComplexInputDescription asComplex() {
+        if (!isComplex()) {
+            throw new UnsupportedOperationException();
+        } else {
+            return (ComplexInputDescription) this;
+        }
+    }
+
+    public LiteralInputDescription asLiteral() {
+        if (!isLiteral()) {
+            throw new UnsupportedOperationException();
+        } else {
+            return (LiteralInputDescription) this;
+        }
+    }
+
+    public BoundingBoxInputDescription asBoundingBox() {
+        if (!isBoundingBox()) {
+            throw new UnsupportedOperationException();
+        } else {
+            return (BoundingBoxInputDescription) this;
+        }
+    }
+
     public static ProcessInputDescription of(InputDescriptionType idt) {
         OwsCodeType id = OwsCodeType.of(idt.getIdentifier());
         BigInteger minOccurs = idt.getMinOccurs();

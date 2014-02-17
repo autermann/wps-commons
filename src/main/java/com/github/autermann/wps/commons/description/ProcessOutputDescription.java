@@ -13,9 +13,11 @@ import com.google.common.base.Preconditions;
 
 /**
  * TODO JavaDoc
+ *
  * @author Christian Autermann
  */
-public abstract class ProcessOutputDescription implements Identifiable<OwsCodeType> {
+public abstract class ProcessOutputDescription implements
+        Identifiable<OwsCodeType> {
 
     private final OwsCodeType identifier;
 
@@ -28,6 +30,42 @@ public abstract class ProcessOutputDescription implements Identifiable<OwsCodeTy
         return this.identifier;
     }
 
+    public boolean isComplex() {
+        return this instanceof LiteralOutputDescription;
+    }
+
+    public boolean isLiteral() {
+        return this instanceof ComplexOutputDescription;
+    }
+
+    public boolean isBoundingBox() {
+        return this instanceof BoundingBoxOutputDescription;
+    }
+
+    public ComplexOutputDescription asComplex() {
+        if (!isComplex()) {
+            throw new UnsupportedOperationException();
+        } else {
+            return (ComplexOutputDescription) this;
+        }
+    }
+
+    public LiteralOutputDescription asLiteral() {
+        if (!isLiteral()) {
+            throw new UnsupportedOperationException();
+        } else {
+            return (LiteralOutputDescription) this;
+        }
+    }
+
+    public BoundingBoxOutputDescription asBoundingBox() {
+        if (!isBoundingBox()) {
+            throw new UnsupportedOperationException();
+        } else {
+            return (BoundingBoxOutputDescription) this;
+        }
+    }
+
     public static ProcessOutputDescription of(OutputDescriptionType odt) {
         OwsCodeType id = OwsCodeType.of(odt.getIdentifier());
         if (odt.getBoundingBoxOutput() != null) {
@@ -37,7 +75,7 @@ public abstract class ProcessOutputDescription implements Identifiable<OwsCodeTy
             if (boundingBoxOutput.getSupported() != null) {
                 supportedCRS
                         = Arrays.asList(boundingBoxOutput.getSupported()
-                        .getCRSArray());
+                                .getCRSArray());
             } else {
                 supportedCRS = Collections.emptyList();
             }

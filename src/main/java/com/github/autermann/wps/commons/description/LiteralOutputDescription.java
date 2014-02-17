@@ -3,7 +3,6 @@ package com.github.autermann.wps.commons.description;
 import java.util.Collections;
 import java.util.Set;
 
-
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
@@ -37,5 +36,4 @@ public class LiteralOutputDescription extends ProcessOutputDescription {
     public Optional<OwsUOM> getDefaultUOM() {
         return Optional.fromNullable(this.defaultUOM);
     }
-
 }

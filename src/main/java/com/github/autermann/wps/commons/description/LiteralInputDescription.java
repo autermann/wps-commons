@@ -44,5 +44,4 @@ public class LiteralInputDescription extends ProcessInputDescription {
     public OwsUOM getDefaultUom() {
         return defaultUom;
     }
-
 }
