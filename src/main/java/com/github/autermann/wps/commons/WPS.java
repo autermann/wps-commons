@@ -17,8 +17,8 @@ import net.opengis.wps.x100.WPSCapabilitiesType;
 import org.apache.xmlbeans.XmlException;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+
 import org.n52.wps.DatahandlersDocument.Datahandlers;
-import org.n52.wps.FormatDocument;
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
 import org.n52.wps.PropertyDocument.Property;
@@ -51,7 +51,7 @@ public class WPS {
     public static final String WEB_PROCESSING_SERVICE_PATH = "/WebProcessingService";
     public static final String RETRIEVE_RESULT_SERVLET_PATH = "/RetrieveResultServlet";
     public static final String ROOT_CONTEXT = "/";
-    
+
     private final AtomicInteger parserCount = new AtomicInteger(0);
     private final AtomicInteger generatorCount = new AtomicInteger(0);
     private Server server;
@@ -218,14 +218,7 @@ public class WPS {
             parser.setName("parser" + parserCount.getAndIncrement());
             if (formats != null) {
                 for (Format f : formats) {
-                    FormatDocument.Format format = parser.addNewFormat();
-                    if (f.getEncoding().isPresent()) {
-                        format.setEncoding(f.getEncoding().get());
-                    }
-                    format.setMimetype(f.getMimeType());
-                    if (f.getSchema().isPresent()) {
-                        format.setSchema(f.getSchema().get());
-                    }
+                    f.encodeTo(parser.addNewFormat());
                 }
             }
             if (properties != null) {
@@ -266,14 +259,7 @@ public class WPS {
             generator.setName("generator" + generatorCount.getAndIncrement());
             if (formats != null) {
                 for (Format f : formats) {
-                    FormatDocument.Format format = generator.addNewFormat();
-                    if (f.getEncoding().isPresent()) {
-                        format.setEncoding(f.getEncoding().get());
-                    }
-                    format.setMimetype(f.getMimeType());
-                    if (f.getSchema().isPresent()) {
-                        format.setSchema(f.getSchema().get());
-                    }
+                    f.encodeTo(generator.addNewFormat());
                 }
             }
             if (properties != null) {
