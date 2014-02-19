@@ -31,11 +31,11 @@ public abstract class ProcessOutputDescription implements
     }
 
     public boolean isComplex() {
-        return this instanceof LiteralOutputDescription;
+        return this instanceof ComplexOutputDescription;
     }
 
     public boolean isLiteral() {
-        return this instanceof ComplexOutputDescription;
+        return this instanceof LiteralOutputDescription;
     }
 
     public boolean isBoundingBox() {
