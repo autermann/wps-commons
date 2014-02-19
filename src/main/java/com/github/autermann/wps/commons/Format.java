@@ -70,6 +70,10 @@ public class Format {
         this.schema = fromNullable(emptyToNull(schema));
     }
 
+    public Format() {
+        this(null, null, null);
+    }
+
     public Optional<String> getMimeType() {
         return mimeType;
     }
