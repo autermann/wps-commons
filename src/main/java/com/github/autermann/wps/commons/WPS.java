@@ -2,6 +2,7 @@ package com.github.autermann.wps.commons;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+import static org.n52.wps.server.database.DatabaseFactory.PROPERTY_NAME_DATABASE_CLASS_NAME;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,6 +19,7 @@ import org.apache.xmlbeans.XmlException;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
+import org.n52.wps.DatabaseDocument.Database;
 import org.n52.wps.DatahandlersDocument.Datahandlers;
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
@@ -54,7 +56,7 @@ public class WPS {
 
     private final AtomicInteger parserCount = new AtomicInteger(0);
     private final AtomicInteger generatorCount = new AtomicInteger(0);
-    private Server server;
+    private final Server server;
     private final ReentrantLock lock = new ReentrantLock();
     private final WPSConfigurationDocument config;
 
@@ -65,11 +67,11 @@ public class WPS {
     }
 
     protected Server createServer(int port) throws Exception {
-        Server server = new Server(port);
-        ServletContextHandler sch = new ServletContextHandler(server, ROOT_CONTEXT);
+        Server s = new Server(port);
+        ServletContextHandler sch = new ServletContextHandler(s, ROOT_CONTEXT);
         sch.addServlet(WebProcessingService.class, WEB_PROCESSING_SERVICE_PATH);
         sch.addServlet(RetrieveResultServlet.class, RETRIEVE_RESULT_SERVLET_PATH);
-        return server;
+        return s;
     }
 
 
@@ -87,7 +89,14 @@ public class WPS {
         serverConfig.setHostname(host);
         serverConfig.setWebappPath(EMPTY);
         serverConfig.setCacheCapabilites(true);
+        createDatabaseConfig(serverConfig.addNewDatabase());
         return document;
+    }
+
+    protected void createDatabaseConfig(Database database) {
+        Property databaseClassName = database.addNewProperty();
+        databaseClassName.setName(PROPERTY_NAME_DATABASE_CLASS_NAME);
+        databaseClassName.setStringValue("org.n52.wps.server.database.FlatFileDatabase");
     }
 
     private CapabilitiesDocument createCapabilitiesSkeleton() {
