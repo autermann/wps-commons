@@ -1,15 +1,17 @@
 package com.github.autermann.wps.commons.description.output;
 
-import com.github.autermann.wps.commons.description.OwsCodeType;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Collections;
 import java.util.Set;
 
+import com.github.autermann.wps.commons.description.OwsCodeType;
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
+ *
  * @author Christian Autermann
  */
 public class BoundingBoxOutputDescription extends ProcessOutputDescription {
@@ -21,8 +23,7 @@ public class BoundingBoxOutputDescription extends ProcessOutputDescription {
                                         String defaultCRS,
                                         Iterable<String> supportedCRS) {
         super(identifier);
-        this.supportedCRS
-                = Sets.newHashSet(Preconditions.checkNotNull(supportedCRS));
+        this.supportedCRS = Sets.newHashSet(checkNotNull(supportedCRS));
         this.defaultCRS = defaultCRS;
     }
 
@@ -33,4 +34,15 @@ public class BoundingBoxOutputDescription extends ProcessOutputDescription {
     public Optional<String> getDefaultCRS() {
         return Optional.fromNullable(this.defaultCRS);
     }
+
+    @Override
+    public BoundingBoxOutputDescription asBoundingBox() {
+        return this;
+    }
+
+    @Override
+    public boolean isBoundingBox() {
+        return true;
+    }
+
 }

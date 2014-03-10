@@ -1,18 +1,19 @@
 package com.github.autermann.wps.commons.description.input;
 
-import com.github.autermann.wps.commons.description.OwsCodeType;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Set;
 
+import com.github.autermann.wps.commons.description.OwsCodeType;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
+ *
  * @author Christian Autermann
  */
 public class BoundingBoxInputDescription extends ProcessInputDescription {
@@ -36,5 +37,15 @@ public class BoundingBoxInputDescription extends ProcessInputDescription {
 
     public Optional<String> getDefaultCRS() {
         return Optional.fromNullable(this.defaultCrs);
+    }
+
+    @Override
+    public boolean isBoundingBox() {
+        return true;
+    }
+
+    @Override
+    public BoundingBoxInputDescription asBoundingBox() {
+        return this;
     }
 }

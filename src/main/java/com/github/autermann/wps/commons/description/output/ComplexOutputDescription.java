@@ -31,4 +31,14 @@ public class ComplexOutputDescription extends ProcessOutputDescription {
     public Format getDefaultFormat() {
         return defaultFormat;
     }
+
+    @Override
+    public ComplexOutputDescription asComplex() {
+        return this;
+    }
+
+    @Override
+    public boolean isComplex() {
+        return true;
+    }
 }

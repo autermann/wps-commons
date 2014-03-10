@@ -1,8 +1,5 @@
 package com.github.autermann.wps.commons.description.output;
 
-import com.github.autermann.wps.commons.description.output.BoundingBoxOutputDescription;
-import com.github.autermann.wps.commons.description.output.ComplexOutputDescription;
-import com.github.autermann.wps.commons.description.output.LiteralOutputDescription;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -36,39 +33,27 @@ public abstract class ProcessOutputDescription implements
     }
 
     public boolean isComplex() {
-        return this instanceof ComplexOutputDescription;
+        return false;
     }
 
     public boolean isLiteral() {
-        return this instanceof LiteralOutputDescription;
+        return false;
     }
 
     public boolean isBoundingBox() {
-        return this instanceof BoundingBoxOutputDescription;
+        return false;
     }
 
     public ComplexOutputDescription asComplex() {
-        if (!isComplex()) {
-            throw new UnsupportedOperationException();
-        } else {
-            return (ComplexOutputDescription) this;
-        }
+        throw new UnsupportedOperationException();
     }
 
     public LiteralOutputDescription asLiteral() {
-        if (!isLiteral()) {
-            throw new UnsupportedOperationException();
-        } else {
-            return (LiteralOutputDescription) this;
-        }
+        throw new UnsupportedOperationException();
     }
 
     public BoundingBoxOutputDescription asBoundingBox() {
-        if (!isBoundingBox()) {
-            throw new UnsupportedOperationException();
-        } else {
-            return (BoundingBoxOutputDescription) this;
-        }
+        throw new UnsupportedOperationException();
     }
 
     public static ProcessOutputDescription of(OutputDescriptionType odt) {

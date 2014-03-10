@@ -46,39 +46,27 @@ public abstract class ProcessInputDescription implements Identifiable<OwsCodeTyp
     }
 
     public boolean isComplex() {
-        return this instanceof LiteralInputDescription;
+        return false;
     }
 
     public boolean isLiteral() {
-        return this instanceof ComplexInputDescription;
+        return false;
     }
 
     public boolean isBoundingBox() {
-        return this instanceof BoundingBoxInputDescription;
+        return false;
     }
 
     public ComplexInputDescription asComplex() {
-        if (!isComplex()) {
-            throw new UnsupportedOperationException();
-        } else {
-            return (ComplexInputDescription) this;
-        }
+        throw new UnsupportedOperationException();
     }
 
     public LiteralInputDescription asLiteral() {
-        if (!isLiteral()) {
-            throw new UnsupportedOperationException();
-        } else {
-            return (LiteralInputDescription) this;
-        }
+        throw new UnsupportedOperationException();
     }
 
     public BoundingBoxInputDescription asBoundingBox() {
-        if (!isBoundingBox()) {
-            throw new UnsupportedOperationException();
-        } else {
-            return (BoundingBoxInputDescription) this;
-        }
+        throw new UnsupportedOperationException();
     }
 
     public static ProcessInputDescription of(InputDescriptionType idt) {

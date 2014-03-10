@@ -11,6 +11,7 @@ import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
+ *
  * @author Christian Autermann
  */
 public class ComplexInputDescription extends ProcessInputDescription {
@@ -33,4 +34,15 @@ public class ComplexInputDescription extends ProcessInputDescription {
     public Format getDefaultFormat() {
         return defaultFormat;
     }
+
+    @Override
+    public ComplexInputDescription asComplex() {
+        return this;
+    }
+
+    @Override
+    public boolean isComplex() {
+        return true;
+    }
+
 }

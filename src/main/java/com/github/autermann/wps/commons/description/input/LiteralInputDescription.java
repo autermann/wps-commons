@@ -1,17 +1,18 @@
 package com.github.autermann.wps.commons.description.input;
 
-import com.github.autermann.wps.commons.description.OwsAllowedValues;
-import com.github.autermann.wps.commons.description.OwsCodeType;
-import com.github.autermann.wps.commons.description.OwsUOM;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Set;
 
+import com.github.autermann.wps.commons.description.OwsAllowedValues;
+import com.github.autermann.wps.commons.description.OwsCodeType;
+import com.github.autermann.wps.commons.description.OwsUOM;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
+ *
  * @author Christian Autermann
  */
 public class LiteralInputDescription extends ProcessInputDescription {
@@ -47,4 +48,15 @@ public class LiteralInputDescription extends ProcessInputDescription {
     public OwsUOM getDefaultUom() {
         return defaultUom;
     }
+
+    @Override
+    public boolean isLiteral() {
+        return true;
+    }
+
+    @Override
+    public LiteralInputDescription asLiteral() {
+        return this;
+    }
+
 }
