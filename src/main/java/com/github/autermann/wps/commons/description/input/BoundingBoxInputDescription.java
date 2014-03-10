@@ -9,8 +9,8 @@ import java.util.Set;
 import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.SupportedCRSsType;
 
-import com.github.autermann.wps.commons.description.OwsCRS;
-import com.github.autermann.wps.commons.description.OwsCodeType;
+import com.github.autermann.wps.commons.description.ows.OwsCRS;
+import com.github.autermann.wps.commons.description.ows.OwsCodeType;
 import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 

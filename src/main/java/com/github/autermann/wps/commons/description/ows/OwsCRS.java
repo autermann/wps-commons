@@ -1,16 +1,18 @@
-package com.github.autermann.wps.commons.description;
+package com.github.autermann.wps.commons.description.ows;
+
+
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import net.opengis.wps.x100.SupportedCRSsType;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
@@ -44,7 +46,7 @@ public class OwsCRS {
         if (values == null || values.isEmpty()) {
             return Collections.emptySet();
         } else {
-            final Set<OwsCRS> supportedCRS = Sets.newHashSet();
+            final Set<OwsCRS> supportedCRS = new HashSet<>(values.size());
             for (String value : values) {
                 supportedCRS.add(of(value));
             }

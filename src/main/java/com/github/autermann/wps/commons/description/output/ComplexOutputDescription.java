@@ -8,7 +8,7 @@ import java.util.Set;
 import net.opengis.wps.x100.OutputDescriptionType;
 
 import com.github.autermann.wps.commons.Format;
-import com.github.autermann.wps.commons.description.OwsCodeType;
+import com.github.autermann.wps.commons.description.ows.OwsCodeType;
 import com.google.common.collect.Sets;
 
 /**

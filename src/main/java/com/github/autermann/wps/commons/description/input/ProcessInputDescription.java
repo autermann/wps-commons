@@ -5,7 +5,7 @@ import java.math.BigInteger;
 import net.opengis.wps.x100.InputDescriptionType;
 
 import com.github.autermann.wps.commons.Identifiable;
-import com.github.autermann.wps.commons.description.OwsCodeType;
+import com.github.autermann.wps.commons.description.ows.OwsCodeType;
 import com.google.common.base.Preconditions;
 
 /**

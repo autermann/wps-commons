@@ -1,4 +1,6 @@
-package com.github.autermann.wps.commons.description;
+package com.github.autermann.wps.commons.description.ows;
+
+
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.emptyToNull;

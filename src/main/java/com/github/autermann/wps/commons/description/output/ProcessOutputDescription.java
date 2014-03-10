@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import net.opengis.wps.x100.OutputDescriptionType;
 
 import com.github.autermann.wps.commons.Identifiable;
-import com.github.autermann.wps.commons.description.OwsCodeType;
+import com.github.autermann.wps.commons.description.ows.OwsCodeType;
 
 /**
  * TODO JavaDoc

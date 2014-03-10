@@ -17,8 +17,6 @@
  */
 package com.github.autermann.wps.commons.description;
 
-import com.github.autermann.wps.commons.description.output.ProcessOutputDescription;
-import com.github.autermann.wps.commons.description.input.ProcessInputDescription;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +27,9 @@ import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 import com.github.autermann.wps.commons.Identifiable;
+import com.github.autermann.wps.commons.description.input.ProcessInputDescription;
+import com.github.autermann.wps.commons.description.output.ProcessOutputDescription;
+import com.github.autermann.wps.commons.description.ows.OwsCodeType;
 
 /**
  * TODO JavaDoc

@@ -1,5 +1,7 @@
 package com.github.autermann.wps.commons.description.input;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Set;
@@ -7,10 +9,9 @@ import java.util.Set;
 import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.LiteralInputType;
 
-import com.github.autermann.wps.commons.description.OwsAllowedValues;
-import com.github.autermann.wps.commons.description.OwsCodeType;
-import com.github.autermann.wps.commons.description.OwsUOM;
-import com.google.common.base.Preconditions;
+import com.github.autermann.wps.commons.description.ows.OwsAllowedValues;
+import com.github.autermann.wps.commons.description.ows.OwsCodeType;
+import com.github.autermann.wps.commons.description.ows.OwsUOM;
 import com.google.common.collect.Sets;
 
 /**
@@ -30,9 +31,9 @@ public class LiteralInputDescription extends ProcessInputDescription {
                                    OwsAllowedValues allowedValues,
                                    OwsUOM defaultUom, Iterable<OwsUOM> uoms) {
         super(identifier, minOccurs, maxOccurs);
-        this.dataType = Preconditions.checkNotNull(dataType);
-        this.allowedValues = Preconditions.checkNotNull(allowedValues);
-        this.uoms = Sets.newHashSet(Preconditions.checkNotNull(uoms));
+        this.dataType = checkNotNull(dataType);
+        this.allowedValues = checkNotNull(allowedValues);
+        this.uoms = Sets.newHashSet(checkNotNull(uoms));
         this.defaultUom = defaultUom;
     }
 

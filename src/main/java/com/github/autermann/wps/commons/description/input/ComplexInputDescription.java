@@ -1,5 +1,7 @@
 package com.github.autermann.wps.commons.description.input;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Set;
@@ -7,8 +9,7 @@ import java.util.Set;
 import net.opengis.wps.x100.InputDescriptionType;
 
 import com.github.autermann.wps.commons.Format;
-import com.github.autermann.wps.commons.description.OwsCodeType;
-import com.google.common.base.Preconditions;
+import com.github.autermann.wps.commons.description.ows.OwsCodeType;
 import com.google.common.collect.Sets;
 
 /**
@@ -25,8 +26,8 @@ public class ComplexInputDescription extends ProcessInputDescription {
                                    BigInteger maxOccurs, Format defaultFormat,
                                    Iterable<Format> formats) {
         super(identifier, minOccurs, maxOccurs);
-        this.formats = Sets.newHashSet(Preconditions.checkNotNull(formats));
-        this.defaultFormat = Preconditions.checkNotNull(defaultFormat);
+        this.formats = Sets.newHashSet(checkNotNull(formats));
+        this.defaultFormat = checkNotNull(defaultFormat);
     }
 
     public Set<Format> getFormats() {
