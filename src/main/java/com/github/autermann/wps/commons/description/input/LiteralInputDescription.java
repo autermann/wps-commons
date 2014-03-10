@@ -1,5 +1,8 @@
-package com.github.autermann.wps.commons.description;
+package com.github.autermann.wps.commons.description.input;
 
+import com.github.autermann.wps.commons.description.OwsAllowedValues;
+import com.github.autermann.wps.commons.description.OwsCodeType;
+import com.github.autermann.wps.commons.description.OwsUOM;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Set;

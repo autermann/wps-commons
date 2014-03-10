@@ -1,5 +1,6 @@
-package com.github.autermann.wps.commons.description;
+package com.github.autermann.wps.commons.description.input;
 
+import com.github.autermann.wps.commons.description.OwsCodeType;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.math.BigInteger;

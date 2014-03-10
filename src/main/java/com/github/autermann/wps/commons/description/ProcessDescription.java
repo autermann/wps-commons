@@ -17,6 +17,8 @@
  */
 package com.github.autermann.wps.commons.description;
 
+import com.github.autermann.wps.commons.description.output.ProcessOutputDescription;
+import com.github.autermann.wps.commons.description.input.ProcessInputDescription;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

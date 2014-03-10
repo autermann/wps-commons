@@ -1,4 +1,4 @@
-package com.github.autermann.wps.commons.description;
+package com.github.autermann.wps.commons.description.input;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -10,6 +10,9 @@ import net.opengis.wps.x100.SupportedCRSsType;
 
 import com.github.autermann.wps.commons.Format;
 import com.github.autermann.wps.commons.Identifiable;
+import com.github.autermann.wps.commons.description.OwsAllowedValues;
+import com.github.autermann.wps.commons.description.OwsCodeType;
+import com.github.autermann.wps.commons.description.OwsUOM;
 import com.google.common.base.Preconditions;
 
 /**

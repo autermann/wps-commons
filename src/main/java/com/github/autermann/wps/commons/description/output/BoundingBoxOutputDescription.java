@@ -1,5 +1,6 @@
-package com.github.autermann.wps.commons.description;
+package com.github.autermann.wps.commons.description.output;
 
+import com.github.autermann.wps.commons.description.OwsCodeType;
 import java.util.Collections;
 import java.util.Set;
 

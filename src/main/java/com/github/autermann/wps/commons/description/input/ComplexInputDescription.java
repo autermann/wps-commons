@@ -1,9 +1,11 @@
-package com.github.autermann.wps.commons.description;
+package com.github.autermann.wps.commons.description.input;
 
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Set;
 
 import com.github.autermann.wps.commons.Format;
+import com.github.autermann.wps.commons.description.OwsCodeType;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
@@ -11,14 +13,15 @@ import com.google.common.collect.Sets;
  * TODO JavaDoc
  * @author Christian Autermann
  */
-public class ComplexOutputDescription extends ProcessOutputDescription {
+public class ComplexInputDescription extends ProcessInputDescription {
 
     private final Set<Format> formats;
     private final Format defaultFormat;
 
-    public ComplexOutputDescription(OwsCodeType identifier, Format defaultFormat,
-                                    Iterable<Format> formats) {
-        super(identifier);
+    public ComplexInputDescription(OwsCodeType identifier, BigInteger minOccurs,
+                                   BigInteger maxOccurs, Format defaultFormat,
+                                   Iterable<Format> formats) {
+        super(identifier, minOccurs, maxOccurs);
         this.formats = Sets.newHashSet(Preconditions.checkNotNull(formats));
         this.defaultFormat = Preconditions.checkNotNull(defaultFormat);
     }

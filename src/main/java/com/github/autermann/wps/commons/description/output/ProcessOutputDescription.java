@@ -1,5 +1,8 @@
-package com.github.autermann.wps.commons.description;
+package com.github.autermann.wps.commons.description.output;
 
+import com.github.autermann.wps.commons.description.output.BoundingBoxOutputDescription;
+import com.github.autermann.wps.commons.description.output.ComplexOutputDescription;
+import com.github.autermann.wps.commons.description.output.LiteralOutputDescription;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -9,6 +12,8 @@ import net.opengis.wps.x100.SupportedCRSsType;
 
 import com.github.autermann.wps.commons.Format;
 import com.github.autermann.wps.commons.Identifiable;
+import com.github.autermann.wps.commons.description.OwsCodeType;
+import com.github.autermann.wps.commons.description.OwsUOM;
 import com.google.common.base.Preconditions;
 
 /**
