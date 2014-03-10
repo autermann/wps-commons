@@ -9,6 +9,7 @@ import net.opengis.wps.x100.LiteralOutputType;
 import net.opengis.wps.x100.OutputDescriptionType;
 
 import com.github.autermann.wps.commons.description.ows.OwsCodeType;
+import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 import com.github.autermann.wps.commons.description.ows.OwsUOM;
 import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
@@ -24,9 +25,13 @@ public class LiteralOutputDescription extends ProcessOutputDescription {
     private final Set<OwsUOM> uoms;
     private final OwsUOM defaultUOM;
 
-    public LiteralOutputDescription(OwsCodeType identifier, String dataType,
-                                    OwsUOM defaultUOM, Iterable<OwsUOM> uoms) {
-        super(identifier);
+    public LiteralOutputDescription(OwsCodeType identifier,
+                                    OwsLanguageString title,
+                                    OwsLanguageString abstrakt,
+                                    String dataType,
+                                    OwsUOM defaultUOM,
+                                    Iterable<OwsUOM> uoms) {
+        super(identifier, title, abstrakt);
         this.dataType = checkNotNull(dataType);
         this.defaultUOM = defaultUOM;
         this.uoms = Sets.newHashSet(checkNotNull(uoms));
@@ -58,6 +63,8 @@ public class LiteralOutputDescription extends ProcessOutputDescription {
         LiteralOutputType literalOutput = odt.getLiteralOutput();
         return new LiteralOutputDescription(
                 OwsCodeType.of(odt.getIdentifier()),
+                OwsLanguageString.of(odt.getTitle()),
+                OwsLanguageString.of(odt.getAbstract()),
                 literalOutput.getDataType().getStringValue(),
                 OwsUOM.getDefault(literalOutput),
                 OwsUOM.getSupported(literalOutput));

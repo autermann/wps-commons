@@ -2,7 +2,6 @@ package com.github.autermann.wps.commons.description.input;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Set;
 
@@ -11,6 +10,7 @@ import net.opengis.wps.x100.SupportedCRSsType;
 
 import com.github.autermann.wps.commons.description.ows.OwsCRS;
 import com.github.autermann.wps.commons.description.ows.OwsCodeType;
+import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 
@@ -25,11 +25,12 @@ public class BoundingBoxInputDescription extends ProcessInputDescription {
     private final OwsCRS defaultCrs;
 
     public BoundingBoxInputDescription(OwsCodeType identifier,
-                                       BigInteger minOccurs,
-                                       BigInteger maxOccurs,
+                                       OwsLanguageString title,
+                                       OwsLanguageString abstrakt,
+                                       InputOccurence occurence,
                                        OwsCRS defaultCrs,
                                        Iterable<OwsCRS> supportedCrs) {
-        super(identifier, minOccurs, maxOccurs);
+        super(identifier, title, abstrakt, occurence);
         this.supportedCrs = Sets.newHashSet(checkNotNull(supportedCrs));
         this.defaultCrs = defaultCrs;
     }
@@ -56,8 +57,9 @@ public class BoundingBoxInputDescription extends ProcessInputDescription {
         SupportedCRSsType boundingBoxData = idt.getBoundingBoxData();
         return new BoundingBoxInputDescription(
                 OwsCodeType.of(idt.getIdentifier()),
-                idt.getMinOccurs(),
-                idt.getMaxOccurs(),
+                OwsLanguageString.of(idt.getTitle()),
+                OwsLanguageString.of(idt.getAbstract()),
+                InputOccurence.of(idt),
                 OwsCRS.getDefault(boundingBoxData),
                 OwsCRS.getSupported(boundingBoxData));
     }

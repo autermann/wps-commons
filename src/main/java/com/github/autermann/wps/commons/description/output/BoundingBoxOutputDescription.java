@@ -10,6 +10,7 @@ import net.opengis.wps.x100.SupportedCRSsType;
 
 import com.github.autermann.wps.commons.description.ows.OwsCRS;
 import com.github.autermann.wps.commons.description.ows.OwsCodeType;
+import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 
@@ -24,9 +25,11 @@ public class BoundingBoxOutputDescription extends ProcessOutputDescription {
     private final OwsCRS defaultCRS;
 
     public BoundingBoxOutputDescription(OwsCodeType identifier,
+                                        OwsLanguageString title,
+                                        OwsLanguageString abstrakt,
                                         OwsCRS defaultCRS,
                                         Iterable<OwsCRS> supportedCRS) {
-        super(identifier);
+        super(identifier, title, abstrakt);
         this.supportedCRS = Sets.newHashSet(checkNotNull(supportedCRS));
         this.defaultCRS = defaultCRS;
     }
@@ -53,6 +56,8 @@ public class BoundingBoxOutputDescription extends ProcessOutputDescription {
         SupportedCRSsType boundingBoxOutput = odt.getBoundingBoxOutput();
         return new BoundingBoxOutputDescription(
                 OwsCodeType.of(odt.getIdentifier()),
+                OwsLanguageString.of(odt.getTitle()),
+                OwsLanguageString.of(odt.getAbstract()),
                 OwsCRS.getDefault(boundingBoxOutput),
                 OwsCRS.getSupported(boundingBoxOutput));
     }

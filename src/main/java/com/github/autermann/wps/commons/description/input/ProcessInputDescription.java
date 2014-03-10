@@ -1,43 +1,32 @@
 package com.github.autermann.wps.commons.description.input;
 
-import java.math.BigInteger;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import net.opengis.wps.x100.InputDescriptionType;
 
-import com.github.autermann.wps.commons.Identifiable;
+import com.github.autermann.wps.commons.description.AbstractDescription;
 import com.github.autermann.wps.commons.description.ows.OwsCodeType;
-import com.google.common.base.Preconditions;
+import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public abstract class ProcessInputDescription implements
-        Identifiable<OwsCodeType> {
+public abstract class ProcessInputDescription extends AbstractDescription {
 
-    private final OwsCodeType identifier;
-    private final BigInteger minOccurs;
-    private final BigInteger maxOccurs;
+    private final InputOccurence occurence;
 
-    public ProcessInputDescription(OwsCodeType identifier, BigInteger minOccurs,
-                                   BigInteger maxOccurs) {
-        this.identifier = Preconditions.checkNotNull(identifier);
-        this.minOccurs = minOccurs == null ? BigInteger.ONE : minOccurs;
-        this.maxOccurs = maxOccurs == null ? BigInteger.ONE : maxOccurs;
+    public ProcessInputDescription(OwsCodeType identifier,
+                                   OwsLanguageString title,
+                                   OwsLanguageString abstrakt,
+                                   InputOccurence occurence) {
+        super(identifier, title, abstrakt);
+        this.occurence = checkNotNull(occurence);
     }
 
-    @Override
-    public OwsCodeType getID() {
-        return this.identifier;
-    }
-
-    public BigInteger getMinOccurs() {
-        return this.minOccurs;
-    }
-
-    public BigInteger getMaxOccurs() {
-        return this.maxOccurs;
+    public InputOccurence getOccurence() {
+        return this.occurence;
     }
 
     public boolean isComplex() {

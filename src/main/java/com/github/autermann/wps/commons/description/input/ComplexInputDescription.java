@@ -2,7 +2,6 @@ package com.github.autermann.wps.commons.description.input;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Set;
 
@@ -10,6 +9,7 @@ import net.opengis.wps.x100.InputDescriptionType;
 
 import com.github.autermann.wps.commons.Format;
 import com.github.autermann.wps.commons.description.ows.OwsCodeType;
+import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 import com.google.common.collect.Sets;
 
 /**
@@ -22,10 +22,13 @@ public class ComplexInputDescription extends ProcessInputDescription {
     private final Set<Format> formats;
     private final Format defaultFormat;
 
-    public ComplexInputDescription(OwsCodeType identifier, BigInteger minOccurs,
-                                   BigInteger maxOccurs, Format defaultFormat,
+    public ComplexInputDescription(OwsCodeType identifier,
+                                   OwsLanguageString title,
+                                   OwsLanguageString abstrakt,
+                                   InputOccurence occurence,
+                                   Format defaultFormat,
                                    Iterable<Format> formats) {
-        super(identifier, minOccurs, maxOccurs);
+        super(identifier, title, abstrakt, occurence);
         this.formats = Sets.newHashSet(checkNotNull(formats));
         this.defaultFormat = checkNotNull(defaultFormat);
     }
@@ -51,8 +54,9 @@ public class ComplexInputDescription extends ProcessInputDescription {
     public static ComplexInputDescription of(InputDescriptionType idt) {
         return new ComplexInputDescription(
                 OwsCodeType.of(idt.getIdentifier()),
-                idt.getMinOccurs(),
-                idt.getMaxOccurs(),
+                OwsLanguageString.of(idt.getTitle()),
+                OwsLanguageString.of(idt.getAbstract()),
+                InputOccurence.of(idt),
                 Format.getDefault(idt),
                 Format.getSupported(idt));
     }

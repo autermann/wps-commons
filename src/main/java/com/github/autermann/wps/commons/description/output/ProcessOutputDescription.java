@@ -1,29 +1,22 @@
 package com.github.autermann.wps.commons.description.output;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import net.opengis.wps.x100.OutputDescriptionType;
 
-import com.github.autermann.wps.commons.Identifiable;
+import com.github.autermann.wps.commons.description.AbstractDescription;
 import com.github.autermann.wps.commons.description.ows.OwsCodeType;
+import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public abstract class ProcessOutputDescription implements
-        Identifiable<OwsCodeType> {
+public abstract class ProcessOutputDescription extends AbstractDescription {
 
-    private final OwsCodeType identifier;
-
-    public ProcessOutputDescription(OwsCodeType identifier) {
-        this.identifier = checkNotNull(identifier);
-    }
-
-    @Override
-    public OwsCodeType getID() {
-        return this.identifier;
+    public ProcessOutputDescription(OwsCodeType identifier,
+                                    OwsLanguageString title,
+                                    OwsLanguageString abstrakt) {
+        super(identifier, title, abstrakt);
     }
 
     public boolean isComplex() {

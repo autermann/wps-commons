@@ -2,7 +2,6 @@ package com.github.autermann.wps.commons.description.input;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Set;
 
@@ -11,6 +10,7 @@ import net.opengis.wps.x100.LiteralInputType;
 
 import com.github.autermann.wps.commons.description.ows.OwsAllowedValues;
 import com.github.autermann.wps.commons.description.ows.OwsCodeType;
+import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 import com.github.autermann.wps.commons.description.ows.OwsUOM;
 import com.google.common.collect.Sets;
 
@@ -26,11 +26,14 @@ public class LiteralInputDescription extends ProcessInputDescription {
     private final OwsUOM defaultUom;
     private final OwsAllowedValues allowedValues;
 
-    public LiteralInputDescription(OwsCodeType identifier, BigInteger minOccurs,
-                                   BigInteger maxOccurs, String dataType,
+    public LiteralInputDescription(OwsCodeType identifier,
+                                   OwsLanguageString title,
+                                   OwsLanguageString abstrakt,
+                                   InputOccurence occurence,
+                                   String dataType,
                                    OwsAllowedValues allowedValues,
                                    OwsUOM defaultUom, Iterable<OwsUOM> uoms) {
-        super(identifier, minOccurs, maxOccurs);
+        super(identifier, title, abstrakt, occurence);
         this.dataType = checkNotNull(dataType);
         this.allowedValues = checkNotNull(allowedValues);
         this.uoms = Sets.newHashSet(checkNotNull(uoms));
@@ -67,8 +70,9 @@ public class LiteralInputDescription extends ProcessInputDescription {
         LiteralInputType literalData = idt.getLiteralData();
         return new LiteralInputDescription(
                 OwsCodeType.of(idt.getIdentifier()),
-                idt.getMinOccurs(),
-                idt.getMaxOccurs(),
+                OwsLanguageString.of(idt.getTitle()),
+                OwsLanguageString.of(idt.getAbstract()),
+                InputOccurence.of(idt),
                 literalData.getDataType()
                 .getStringValue(),
                 OwsAllowedValues.of(literalData.getAllowedValues()),
