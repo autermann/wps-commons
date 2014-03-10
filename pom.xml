@@ -235,6 +235,15 @@
                         <java>SLASHSTAR_STYLE</java>
                     </mapping>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>format-license-headers</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
