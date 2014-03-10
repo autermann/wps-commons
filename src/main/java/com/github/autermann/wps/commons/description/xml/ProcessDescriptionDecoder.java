@@ -59,22 +59,16 @@ import com.github.autermann.wps.commons.description.ows.OwsUOM;
  */
 public class ProcessDescriptionDecoder {
     public ProcessDescription decodeProcessDescription(ProcessDescriptionType xb) {
-        ProcessDescription pd = createProcessDescription(OwsCodeType.of(xb
-                .getIdentifier()), OwsLanguageString.of(xb.getTitle()), OwsLanguageString
-                .of(xb.getAbstract()), xb.getProcessVersion(), xb
-                .getStoreSupported(), xb.getStatusSupported());
+        ProcessDescription pd = new ProcessDescription(
+                OwsCodeType.of(xb.getIdentifier()),
+                OwsLanguageString.of(xb.getTitle()),
+                OwsLanguageString.of(xb.getAbstract()),
+                xb.getProcessVersion(),
+                xb.getStoreSupported(),
+                xb.getStatusSupported());
         pd.addInputs(decodeProcessInputs(xb.getDataInputs()));
         pd.addOutputs(decodeProcessOutputs(xb.getProcessOutputs()));
         return pd;
-    }
-
-    protected ProcessDescription createProcessDescription(OwsCodeType identifier,
-                                                        OwsLanguageString title,
-                                                        OwsLanguageString abstrakt,
-                                                        String version,
-                                                        boolean storeSupported,
-                                                        boolean statusSupported) {
-        return new ProcessDescription(identifier, title, abstrakt, version, storeSupported, statusSupported);
     }
 
     protected List<ProcessInputDescription> decodeProcessInputs(ProcessDescriptionType.DataInputs xb) {
