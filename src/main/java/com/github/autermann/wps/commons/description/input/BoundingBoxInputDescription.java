@@ -57,6 +57,21 @@ public class BoundingBoxInputDescription extends ProcessInputDescription
         this.defaultCrs = defaultCrs;
     }
 
+    public BoundingBoxInputDescription(OwsCodeType identifier,
+                                       OwsLanguageString title,
+                                       OwsLanguageString abstrakt,
+                                       InputOccurence occurence,
+                                       OwsCRS defaultCrs) {
+        this(identifier, title, abstrakt, occurence, defaultCrs, null);
+    }
+
+    public BoundingBoxInputDescription(OwsCodeType identifier,
+                                       OwsLanguageString title,
+                                       OwsLanguageString abstrakt,
+                                       InputOccurence occurence) {
+        this(identifier, title, abstrakt, occurence, null, null);
+    }
+
     @Override
     public Set<OwsCRS> getSupportedCRS() {
         return Collections.unmodifiableSet(supportedCrs);

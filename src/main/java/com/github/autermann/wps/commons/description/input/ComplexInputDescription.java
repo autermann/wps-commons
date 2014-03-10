@@ -62,6 +62,15 @@ public class ComplexInputDescription extends ProcessInputDescription implements
         this.maximumMegabytes = maximumMegabytes;
     }
 
+    public ComplexInputDescription(OwsCodeType identifier,
+                                   OwsLanguageString title,
+                                   OwsLanguageString abstrakt,
+                                   InputOccurence occurence,
+                                   Format defaultFormat,
+                                   Iterable<Format> formats) {
+        this(identifier, title, abstrakt, occurence, defaultFormat, formats, null);
+    }
+
     @Override
     public Set<Format> getFormats() {
         return Collections.unmodifiableSet(formats);

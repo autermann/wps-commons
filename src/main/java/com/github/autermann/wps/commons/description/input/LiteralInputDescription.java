@@ -66,6 +66,34 @@ public class LiteralInputDescription
         this.defaultUOM = defaultUOM;
     }
 
+    public LiteralInputDescription(OwsCodeType identifier,
+                                   OwsLanguageString title,
+                                   OwsLanguageString abstrakt,
+                                   InputOccurence occurence,
+                                   String dataType,
+                                   OwsAllowedValues allowedValues,
+                                   OwsUOM defaultUOM) {
+        this(identifier, title, abstrakt, occurence, dataType, allowedValues, defaultUOM, null);
+    }
+
+    public LiteralInputDescription(OwsCodeType identifier,
+                                   OwsLanguageString title,
+                                   OwsLanguageString abstrakt,
+                                   InputOccurence occurence,
+                                   String dataType,
+                                   OwsAllowedValues allowedValues) {
+        this(identifier, title, abstrakt, occurence, dataType, allowedValues, null, null);
+    }
+
+    public LiteralInputDescription(OwsCodeType identifier,
+                                   OwsLanguageString title,
+                                   OwsLanguageString abstrakt,
+                                   InputOccurence occurence,
+                                   String dataType) {
+        this(identifier, title, abstrakt, occurence, dataType, OwsAllowedValues
+                .any(), null, null);
+    }
+
     @Override
     public String getDataType() {
         return this.dataType;

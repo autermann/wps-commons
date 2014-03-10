@@ -63,6 +63,21 @@ public class LiteralOutputDescription
         }
     }
 
+    public LiteralOutputDescription(OwsCodeType identifier,
+                                    OwsLanguageString title,
+                                    OwsLanguageString abstrakt,
+                                    String dataType,
+                                    OwsUOM defaultUOM) {
+        this(identifier, title, abstrakt, dataType, defaultUOM, null);
+    }
+
+    public LiteralOutputDescription(OwsCodeType identifier,
+                                    OwsLanguageString title,
+                                    OwsLanguageString abstrakt,
+                                    String dataType) {
+        this(identifier, title, abstrakt, dataType, null, null);
+    }
+
     @Override
     public String getDataType() {
         return dataType;

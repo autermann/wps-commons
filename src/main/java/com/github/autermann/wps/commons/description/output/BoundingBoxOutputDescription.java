@@ -57,6 +57,12 @@ public class BoundingBoxOutputDescription
         this.defaultCRS = defaultCRS;
     }
 
+    public BoundingBoxOutputDescription(OwsCodeType identifier,
+                                        OwsLanguageString title,
+                                        OwsLanguageString abstrakt) {
+        this(identifier, title, abstrakt, null, null);
+    }
+
     @Override
     public Set<OwsCRS> getSupportedCRS() {
         return Collections.unmodifiableSet(supportedCRS);
