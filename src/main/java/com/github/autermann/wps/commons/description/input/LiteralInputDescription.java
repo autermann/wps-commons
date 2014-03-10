@@ -4,6 +4,9 @@ import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Set;
 
+import net.opengis.wps.x100.InputDescriptionType;
+import net.opengis.wps.x100.LiteralInputType;
+
 import com.github.autermann.wps.commons.description.OwsAllowedValues;
 import com.github.autermann.wps.commons.description.OwsCodeType;
 import com.github.autermann.wps.commons.description.OwsUOM;
@@ -57,6 +60,20 @@ public class LiteralInputDescription extends ProcessInputDescription {
     @Override
     public LiteralInputDescription asLiteral() {
         return this;
+    }
+
+    public static LiteralInputDescription of(InputDescriptionType idt) {
+        LiteralInputType literalData = idt.getLiteralData();
+        return new LiteralInputDescription(
+                OwsCodeType.of(idt.getIdentifier()),
+                idt.getMinOccurs(),
+                idt.getMaxOccurs(),
+                literalData.getDataType()
+                .getStringValue(),
+                OwsAllowedValues.of(literalData.getAllowedValues()),
+                OwsUOM.getDefault(literalData),
+                OwsUOM.getSupported(literalData));
+        // TODO inputDescription.getLiteralData().getValuesReference()
     }
 
 }

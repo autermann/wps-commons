@@ -1,15 +1,19 @@
 package com.github.autermann.wps.commons.description.output;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Collections;
 import java.util.Set;
 
+import net.opengis.wps.x100.OutputDescriptionType;
+
 import com.github.autermann.wps.commons.Format;
 import com.github.autermann.wps.commons.description.OwsCodeType;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
+ *
  * @author Christian Autermann
  */
 public class ComplexOutputDescription extends ProcessOutputDescription {
@@ -20,8 +24,8 @@ public class ComplexOutputDescription extends ProcessOutputDescription {
     public ComplexOutputDescription(OwsCodeType identifier, Format defaultFormat,
                                     Iterable<Format> formats) {
         super(identifier);
-        this.formats = Sets.newHashSet(Preconditions.checkNotNull(formats));
-        this.defaultFormat = Preconditions.checkNotNull(defaultFormat);
+        this.formats = Sets.newHashSet(checkNotNull(formats));
+        this.defaultFormat = checkNotNull(defaultFormat);
     }
 
     public Set<Format> getFormats() {
@@ -41,4 +45,12 @@ public class ComplexOutputDescription extends ProcessOutputDescription {
     public boolean isComplex() {
         return true;
     }
+
+    public static ComplexOutputDescription of(OutputDescriptionType odt) {
+        return new ComplexOutputDescription(
+                OwsCodeType.of(odt.getIdentifier()),
+                Format.getDefault(odt),
+                Format.getSupported(odt));
+    }
+
 }

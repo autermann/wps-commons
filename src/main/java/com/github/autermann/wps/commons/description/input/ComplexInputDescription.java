@@ -4,6 +4,8 @@ import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Set;
 
+import net.opengis.wps.x100.InputDescriptionType;
+
 import com.github.autermann.wps.commons.Format;
 import com.github.autermann.wps.commons.description.OwsCodeType;
 import com.google.common.base.Preconditions;
@@ -43,6 +45,15 @@ public class ComplexInputDescription extends ProcessInputDescription {
     @Override
     public boolean isComplex() {
         return true;
+    }
+
+    public static ComplexInputDescription of(InputDescriptionType idt) {
+        return new ComplexInputDescription(
+                OwsCodeType.of(idt.getIdentifier()),
+                idt.getMinOccurs(),
+                idt.getMaxOccurs(),
+                Format.getDefault(idt),
+                Format.getSupported(idt));
     }
 
 }
