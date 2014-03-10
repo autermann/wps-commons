@@ -27,7 +27,8 @@ import com.github.autermann.wps.commons.description.ows.OwsCodeType;
 import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 import com.github.autermann.wps.commons.description.ows.OwsUOM;
 import com.google.common.base.Optional;
-import com.google.common.collect.Sets;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * TODO JavaDoc
@@ -49,9 +50,17 @@ public class LiteralOutputDescription
                                     OwsUOM defaultUOM,
                                     Iterable<OwsUOM> uoms) {
         super(identifier, title, abstrakt);
-        this.dataType = checkNotNull(dataType);
+        this.dataType = checkNotNull(Strings.emptyToNull(dataType));
         this.defaultUOM = defaultUOM;
-        this.uoms = Sets.newHashSet(checkNotNull(uoms));
+        if (uoms == null) {
+            if (defaultUOM == null) {
+                this.uoms = Collections.emptySet();
+            } else {
+                this.uoms = Collections.singleton(defaultUOM);
+            }
+        } else {
+            this.uoms = ImmutableSet.copyOf(uoms);
+        }
     }
 
     @Override

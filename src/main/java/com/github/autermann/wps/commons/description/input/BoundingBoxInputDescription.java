@@ -17,8 +17,6 @@
  */
 package com.github.autermann.wps.commons.description.input;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Collections;
 import java.util.Set;
 
@@ -27,7 +25,7 @@ import com.github.autermann.wps.commons.description.ows.OwsCRS;
 import com.github.autermann.wps.commons.description.ows.OwsCodeType;
 import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 import com.google.common.base.Optional;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * TODO JavaDoc
@@ -47,7 +45,15 @@ public class BoundingBoxInputDescription extends ProcessInputDescription
                                        OwsCRS defaultCrs,
                                        Iterable<OwsCRS> supportedCrs) {
         super(identifier, title, abstrakt, occurence);
-        this.supportedCrs = Sets.newHashSet(checkNotNull(supportedCrs));
+        if (supportedCrs == null) {
+            if (defaultCrs == null) {
+                this.supportedCrs = Collections.emptySet();
+            } else {
+                this.supportedCrs = Collections.singleton(defaultCrs);
+            }
+        } else {
+            this.supportedCrs = ImmutableSet.copyOf(supportedCrs);
+        }
         this.defaultCrs = defaultCrs;
     }
 

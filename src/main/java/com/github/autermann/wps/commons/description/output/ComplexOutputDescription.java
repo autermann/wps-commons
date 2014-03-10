@@ -26,7 +26,7 @@ import com.github.autermann.wps.commons.Format;
 import com.github.autermann.wps.commons.description.ComplexDescription;
 import com.github.autermann.wps.commons.description.ows.OwsCodeType;
 import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * TODO JavaDoc
@@ -46,8 +46,12 @@ public class ComplexOutputDescription
                                     Format defaultFormat,
                                     Iterable<Format> formats) {
         super(identifier, title, abstrakt);
-        this.formats = Sets.newHashSet(checkNotNull(formats));
         this.defaultFormat = checkNotNull(defaultFormat);
+        if (formats == null) {
+            this.formats = Collections.singleton(defaultFormat);
+        } else {
+            this.formats = ImmutableSet.copyOf(formats);
+        }
     }
 
     @Override

@@ -28,7 +28,7 @@ import com.github.autermann.wps.commons.description.ows.OwsCodeType;
 import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 import com.github.autermann.wps.commons.description.ows.OwsUOM;
 import com.google.common.base.Optional;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * TODO JavaDoc
@@ -41,7 +41,7 @@ public class LiteralInputDescription
 
     private final String dataType;
     private final Set<OwsUOM> uoms;
-    private final OwsUOM defaultUom;
+    private final OwsUOM defaultUOM;
     private final OwsAllowedValues allowedValues;
 
     public LiteralInputDescription(OwsCodeType identifier,
@@ -50,12 +50,20 @@ public class LiteralInputDescription
                                    InputOccurence occurence,
                                    String dataType,
                                    OwsAllowedValues allowedValues,
-                                   OwsUOM defaultUom, Iterable<OwsUOM> uoms) {
+                                   OwsUOM defaultUOM, Iterable<OwsUOM> uoms) {
         super(identifier, title, abstrakt, occurence);
         this.dataType = checkNotNull(dataType);
         this.allowedValues = checkNotNull(allowedValues);
-        this.uoms = Sets.newHashSet(checkNotNull(uoms));
-        this.defaultUom = defaultUom;
+        if (uoms == null) {
+            if (defaultUOM == null) {
+                this.uoms = Collections.emptySet();
+            } else {
+                this.uoms = Collections.singleton(defaultUOM);
+            }
+        } else {
+            this.uoms = ImmutableSet.copyOf(uoms);
+        }
+        this.defaultUOM = defaultUOM;
     }
 
     @Override
@@ -74,7 +82,7 @@ public class LiteralInputDescription
 
     @Override
     public Optional<OwsUOM> getDefaultUOM() {
-        return Optional.fromNullable(this.defaultUom);
+        return Optional.fromNullable(this.defaultUOM);
     }
 
     @Override

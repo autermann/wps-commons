@@ -39,6 +39,10 @@ public class OwsLanguageString {
         this.value = checkNotNull(Strings.emptyToNull(value));
     }
 
+    public OwsLanguageString(String value) {
+        this(null, value);
+    }
+
     public Optional<String> getLang() {
         return Optional.fromNullable(this.lang);
     }
