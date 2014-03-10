@@ -78,7 +78,7 @@ public class ProcessDescriptionEncoder {
                                  xbDescription.addNewProcessOutputs());
     }
 
-    private void encodeAbstractDescription(AbstractDescription description,
+    protected void encodeAbstractDescription(AbstractDescription description,
                                            DescriptionType xbDescription) {
         description.getID().encodeTo(xbDescription.addNewIdentifier());
         description.getTitle().encodeTo(xbDescription.addNewTitle());
@@ -88,7 +88,7 @@ public class ProcessDescriptionEncoder {
         }
     }
 
-    private void encodeOutputDescriptions(
+    protected void encodeOutputDescriptions(
             Iterable<? extends ProcessOutputDescription> outputDescriptions,
             ProcessOutputs xbOutputDescriptions) {
         for (ProcessOutputDescription outputDescription : outputDescriptions) {
@@ -97,7 +97,7 @@ public class ProcessDescriptionEncoder {
         }
     }
 
-    private void encodeOutputDescription(ProcessOutputDescription output,
+    protected void encodeOutputDescription(ProcessOutputDescription output,
                                          OutputDescriptionType xbOutput) {
         encodeAbstractDescription(output, xbOutput);
         if (output.isBoundingBox()) {
@@ -112,12 +112,12 @@ public class ProcessDescriptionEncoder {
         }
     }
 
-    private void encodeLiteralOutput(LiteralOutputDescription output,
+    protected void encodeLiteralOutput(LiteralOutputDescription output,
                                      LiteralOutputType xbOutput) {
         encodeLiteralDescription(output, xbOutput);
     }
 
-    private void encodeLiteralDescription(LiteralDescription description,
+    protected void encodeLiteralDescription(LiteralDescription description,
                                           LiteralOutputType xbDescription) {
         xbDescription.addNewDataType().setStringValue(description.getDataType());
         if (description.getDefaultUOM().isPresent() || !description.getUOMs()
@@ -136,12 +136,12 @@ public class ProcessDescriptionEncoder {
         }
     }
 
-    private void encodeBoundingBoxOutput(BoundingBoxOutputDescription output,
+    protected void encodeBoundingBoxOutput(BoundingBoxOutputDescription output,
                                          SupportedCRSsType xbOutput) {
         encodeBoundingBoxDescription(output, xbOutput);
     }
 
-    private void encodeBoundingBoxDescription(BoundingBoxDescription description,
+    protected void encodeBoundingBoxDescription(BoundingBoxDescription description,
                                               SupportedCRSsType xbDescription) {
         if (description.getDefaultCRS().isPresent()) {
             xbDescription.addNewDefault().setCRS(
@@ -155,12 +155,12 @@ public class ProcessDescriptionEncoder {
         }
     }
 
-    private void encodeComplexOutput(ComplexOutputDescription output,
+    protected void encodeComplexOutput(ComplexOutputDescription output,
                                      SupportedComplexDataType xbOutput) {
         encodeComplexDescription(output, xbOutput);
     }
 
-    private void encodeComplexDescription(ComplexDescription description,
+    protected void encodeComplexDescription(ComplexDescription description,
                                           SupportedComplexDataType xbDescription) {
         description.getDefaultFormat().encodeTo(xbDescription.addNewDefault()
                 .addNewFormat());
@@ -173,7 +173,7 @@ public class ProcessDescriptionEncoder {
         }
     }
 
-    private void encodeInputDescriptions(
+    protected void encodeInputDescriptions(
             Iterable<? extends ProcessInputDescription> inputDescriptions,
             DataInputs xbInputDescriptions) {
         for (ProcessInputDescription inputDescription : inputDescriptions) {
@@ -182,7 +182,7 @@ public class ProcessDescriptionEncoder {
         }
     }
 
-    private void encodeInputDescription(ProcessInputDescription input,
+    protected void encodeInputDescription(ProcessInputDescription input,
                                         InputDescriptionType xbInput) {
         encodeAbstractDescription(input, xbInput);
         xbInput.setMaxOccurs(input.getOccurence().getMax());
@@ -199,7 +199,7 @@ public class ProcessDescriptionEncoder {
         }
     }
 
-    private void encodeComplexInput(ComplexInputDescription input,
+    protected void encodeComplexInput(ComplexInputDescription input,
                                     SupportedComplexDataInputType xbInput) {
         if (input.getMaximumMegabytes().isPresent()) {
             xbInput.setMaximumMegabytes(input.getMaximumMegabytes().get());
@@ -207,12 +207,12 @@ public class ProcessDescriptionEncoder {
         encodeComplexDescription(input, xbInput);
     }
 
-    private void encodeBoundingBoxInput(BoundingBoxInputDescription input,
+    protected void encodeBoundingBoxInput(BoundingBoxInputDescription input,
                                         SupportedCRSsType xbInput) {
         encodeBoundingBoxDescription(input, xbInput);
     }
 
-    private void encodeLiteralInput(LiteralInputDescription input,
+    protected void encodeLiteralInput(LiteralInputDescription input,
                                     LiteralInputType xbInput) {
         encodeLiteralDescription(input, xbInput);
         if (input.getAllowedValues().isAny()) {
@@ -223,7 +223,7 @@ public class ProcessDescriptionEncoder {
         }
     }
 
-    private void encodeAllowedValues(OwsAllowedValues allowedValues,
+    protected void encodeAllowedValues(OwsAllowedValues allowedValues,
                                      AllowedValues xbAllowedValues) {
         for (OwsValueRestriction restriction : allowedValues) {
             if (restriction.isRange()) {
@@ -236,7 +236,7 @@ public class ProcessDescriptionEncoder {
         }
     }
 
-    private void encodeAllowedRange(OwsAllowedRange range, RangeType xbRange) {
+    protected void encodeAllowedRange(OwsAllowedRange range, RangeType xbRange) {
         if (range.getLowerBound().isPresent()) {
             xbRange.addNewMinimumValue()
                     .setStringValue(range.getLowerBound().get());
@@ -248,7 +248,7 @@ public class ProcessDescriptionEncoder {
         xbRange.setRangeClosure(Collections.singletonList(range.getType()));
     }
 
-    private void encodeAllowedValue(OwsAllowedValue value, ValueType xbValue) {
+    protected void encodeAllowedValue(OwsAllowedValue value, ValueType xbValue) {
         xbValue.setStringValue(value.getValue());
     }
 }

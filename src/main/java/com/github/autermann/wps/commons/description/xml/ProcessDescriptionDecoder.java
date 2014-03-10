@@ -19,6 +19,9 @@ package com.github.autermann.wps.commons.description.xml;
 
 import static com.github.autermann.wps.commons.description.ows.OwsAllowedValues.any;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.opengis.ows.x11.AllowedValuesDocument;
 import net.opengis.ows.x11.RangeType;
 import net.opengis.ows.x11.ValueType;
@@ -56,33 +59,41 @@ import com.github.autermann.wps.commons.description.ows.OwsUOM;
  */
 public class ProcessDescriptionDecoder {
     public ProcessDescription decodeProcessDescription(ProcessDescriptionType xb) {
-        ProcessDescription pd = new ProcessDescription(
-                OwsCodeType.of(xb.getIdentifier()),
-                OwsLanguageString.of(xb.getTitle()),
-                OwsLanguageString.of(xb.getAbstract()),
-                xb.getProcessVersion(),
-                xb.getStoreSupported(),
-                xb.getStatusSupported());
-        decodeProcessInputs(xb.getDataInputs(), pd);
-        decodeProcessOutputs(xb.getProcessOutputs(), pd);
+        ProcessDescription pd = createProcessDescription(OwsCodeType.of(xb
+                .getIdentifier()), OwsLanguageString.of(xb.getTitle()), OwsLanguageString
+                .of(xb.getAbstract()), xb.getProcessVersion(), xb
+                .getStoreSupported(), xb.getStatusSupported());
+        pd.addInputs(decodeProcessInputs(xb.getDataInputs()));
+        pd.addOutputs(decodeProcessOutputs(xb.getProcessOutputs()));
         return pd;
     }
 
-    private void decodeProcessInputs(ProcessDescriptionType.DataInputs xb,
-                                     ProcessDescription pd) {
+    protected ProcessDescription createProcessDescription(OwsCodeType identifier,
+                                                        OwsLanguageString title,
+                                                        OwsLanguageString abstrakt,
+                                                        String version,
+                                                        boolean storeSupported,
+                                                        boolean statusSupported) {
+        return new ProcessDescription(identifier, title, abstrakt, version, storeSupported, statusSupported);
+    }
+
+    protected List<ProcessInputDescription> decodeProcessInputs(ProcessDescriptionType.DataInputs xb) {
+        List<ProcessInputDescription> descriptions = new ArrayList<>(xb.getInputArray().length);
         for (InputDescriptionType xbInputDescription : xb.getInputArray()) {
-            pd.addInput(decodeProcessInput(xbInputDescription));
+            descriptions.add(decodeProcessInput(xbInputDescription));
         }
+        return descriptions;
     }
 
-    private void decodeProcessOutputs(ProcessDescriptionType.ProcessOutputs xb,
-                                      ProcessDescription pd) {
+    protected List<ProcessOutputDescription> decodeProcessOutputs(ProcessDescriptionType.ProcessOutputs xb) {
+        List<ProcessOutputDescription> descriptions = new ArrayList<>(xb.getOutputArray().length);
         for (OutputDescriptionType xbOutputDescription : xb.getOutputArray()) {
-            pd.addOutput(decodeProcessOutput(xbOutputDescription));
+            descriptions.add(decodeProcessOutput(xbOutputDescription));
         }
+        return descriptions;
     }
 
-    public ProcessOutputDescription decodeProcessOutput(
+    protected ProcessOutputDescription decodeProcessOutput(
             OutputDescriptionType odt) {
         if (odt.getBoundingBoxOutput() != null) {
             return decodeBoundingBoxOutputDescription(odt);
@@ -95,7 +106,7 @@ public class ProcessDescriptionDecoder {
         }
     }
 
-    public ProcessInputDescription decodeProcessInput(InputDescriptionType idt) {
+    protected ProcessInputDescription decodeProcessInput(InputDescriptionType idt) {
         if (idt.getBoundingBoxData() != null) {
             return decodeBoundingBoxInputDescription(idt);
         } else if (idt.getLiteralData() != null) {
@@ -107,11 +118,11 @@ public class ProcessDescriptionDecoder {
         }
     }
 
-    public InputOccurence decodeInputOccurence(InputDescriptionType idt) {
+    protected InputOccurence decodeInputOccurence(InputDescriptionType idt) {
         return new InputOccurence(idt.getMinOccurs(), idt.getMaxOccurs());
     }
 
-    public BoundingBoxInputDescription decodeBoundingBoxInputDescription(
+    protected BoundingBoxInputDescription decodeBoundingBoxInputDescription(
             InputDescriptionType idt) {
         SupportedCRSsType boundingBoxData = idt.getBoundingBoxData();
         return new BoundingBoxInputDescription(
@@ -123,7 +134,7 @@ public class ProcessDescriptionDecoder {
                 OwsCRS.getSupported(boundingBoxData));
     }
 
-    public LiteralInputDescription decodeLiteralInputDescription(
+    protected LiteralInputDescription decodeLiteralInputDescription(
             InputDescriptionType idt) {
         LiteralInputType literalData = idt.getLiteralData();
         return new LiteralInputDescription(
@@ -138,7 +149,7 @@ public class ProcessDescriptionDecoder {
         // TODO inputDescription.getLiteralData().getValuesReference()
     }
 
-    public OwsAllowedValues decodeOwsAllowedValues(
+    protected OwsAllowedValues decodeOwsAllowedValues(
             AllowedValuesDocument.AllowedValues xbAllowedValues) {
         if (xbAllowedValues == null ||
             (xbAllowedValues.getRangeArray().length == 0 &&
@@ -155,11 +166,11 @@ public class ProcessDescriptionDecoder {
         return owsAllowedValues;
     }
 
-    public OwsAllowedValue decodeOwsAllowedValue(ValueType xbValue) {
+    protected OwsAllowedValue decodeOwsAllowedValue(ValueType xbValue) {
         return new OwsAllowedValue(xbValue.getStringValue());
     }
 
-    public OwsAllowedRange decodeOwsAllowedRange(RangeType xbRange) {
+    protected OwsAllowedRange decodeOwsAllowedRange(RangeType xbRange) {
         String lower = xbRange.isSetMaximumValue()
                        ? xbRange.getMinimumValue().getStringValue() : null;
         String upper = xbRange.isSetMaximumValue()
@@ -194,7 +205,7 @@ public class ProcessDescriptionDecoder {
         return new OwsAllowedRange(lower, lowerType, upper, upperType);
     }
 
-    public ComplexInputDescription decodeComplexInputDescription(
+    protected ComplexInputDescription decodeComplexInputDescription(
             InputDescriptionType idt) {
         return new ComplexInputDescription(
                 OwsCodeType.of(idt.getIdentifier()),
@@ -206,7 +217,7 @@ public class ProcessDescriptionDecoder {
                 idt.getComplexData().getMaximumMegabytes());
     }
 
-    public LiteralOutputDescription decodeLiteralOutputDescription(
+    protected LiteralOutputDescription decodeLiteralOutputDescription(
             OutputDescriptionType odt) {
         LiteralOutputType literalOutput = odt.getLiteralOutput();
         return new LiteralOutputDescription(
@@ -218,7 +229,7 @@ public class ProcessDescriptionDecoder {
                 OwsUOM.getSupported(literalOutput));
     }
 
-    public ComplexOutputDescription decodeComplexOutputDescription(
+    protected ComplexOutputDescription decodeComplexOutputDescription(
             OutputDescriptionType odt) {
         return new ComplexOutputDescription(
                 OwsCodeType.of(odt.getIdentifier()),
@@ -228,7 +239,7 @@ public class ProcessDescriptionDecoder {
                 Format.getSupported(odt));
     }
 
-    public BoundingBoxOutputDescription decodeBoundingBoxOutputDescription(
+    protected BoundingBoxOutputDescription decodeBoundingBoxOutputDescription(
             OutputDescriptionType odt) {
         SupportedCRSsType boundingBoxOutput = odt.getBoundingBoxOutput();
         return new BoundingBoxOutputDescription(
