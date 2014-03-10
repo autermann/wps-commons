@@ -119,7 +119,7 @@ public class ProcessDescriptionEncoder {
 
     protected void encodeLiteralDescription(LiteralDescription description,
                                           LiteralOutputType xbDescription) {
-        xbDescription.addNewDataType().setStringValue(description.getDataType());
+        xbDescription.addNewDataType().setReference(description.getDataType());
         if (description.getDefaultUOM().isPresent() || !description.getUOMs()
                 .isEmpty()) {
             SupportedUOMsType xbUoms = xbDescription.addNewUOMs();

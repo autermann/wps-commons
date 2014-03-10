@@ -218,7 +218,7 @@ public class ProcessDescriptionDecoder {
                 OwsCodeType.of(odt.getIdentifier()),
                 OwsLanguageString.of(odt.getTitle()),
                 OwsLanguageString.of(odt.getAbstract()),
-                literalOutput.getDataType().getStringValue(),
+                literalOutput.getDataType().getReference(),
                 OwsUOM.getDefault(literalOutput),
                 OwsUOM.getSupported(literalOutput));
     }
