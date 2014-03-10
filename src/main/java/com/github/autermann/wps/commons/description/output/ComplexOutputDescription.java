@@ -22,9 +22,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Collections;
 import java.util.Set;
 
-import net.opengis.wps.x100.OutputDescriptionType;
-
 import com.github.autermann.wps.commons.Format;
+import com.github.autermann.wps.commons.description.ComplexDescription;
 import com.github.autermann.wps.commons.description.ows.OwsCodeType;
 import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 import com.google.common.collect.Sets;
@@ -34,7 +33,9 @@ import com.google.common.collect.Sets;
  *
  * @author Christian Autermann
  */
-public class ComplexOutputDescription extends ProcessOutputDescription {
+public class ComplexOutputDescription
+        extends ProcessOutputDescription
+        implements ComplexDescription {
 
     private final Set<Format> formats;
     private final Format defaultFormat;
@@ -49,10 +50,12 @@ public class ComplexOutputDescription extends ProcessOutputDescription {
         this.defaultFormat = checkNotNull(defaultFormat);
     }
 
+    @Override
     public Set<Format> getFormats() {
         return Collections.unmodifiableSet(formats);
     }
 
+    @Override
     public Format getDefaultFormat() {
         return defaultFormat;
     }
@@ -66,14 +69,4 @@ public class ComplexOutputDescription extends ProcessOutputDescription {
     public boolean isComplex() {
         return true;
     }
-
-    public static ComplexOutputDescription of(OutputDescriptionType odt) {
-        return new ComplexOutputDescription(
-                OwsCodeType.of(odt.getIdentifier()),
-                OwsLanguageString.of(odt.getTitle()),
-                OwsLanguageString.of(odt.getAbstract()),
-                Format.getDefault(odt),
-                Format.getSupported(odt));
-    }
-
 }

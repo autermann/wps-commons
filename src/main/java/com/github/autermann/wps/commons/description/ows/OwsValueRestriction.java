@@ -17,12 +17,25 @@
  */
 package com.github.autermann.wps.commons.description.ows;
 
-
-
 /**
  * TODO JavaDoc
+ *
  * @author Christian Autermann
  */
-public interface OwsValueRestriction {
+public abstract class OwsValueRestriction {
+    public boolean isRange() {
+        return false;
+    }
 
+    public boolean isValue() {
+        return false;
+    }
+
+    public OwsAllowedValue asValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    public OwsAllowedRange asRange() {
+        throw new UnsupportedOperationException();
+    }
 }

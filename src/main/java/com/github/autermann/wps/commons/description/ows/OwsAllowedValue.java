@@ -17,10 +17,6 @@
  */
 package com.github.autermann.wps.commons.description.ows;
 
-
-
-import net.opengis.ows.x11.ValueType;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
@@ -29,7 +25,7 @@ import com.google.common.base.Preconditions;
  *
  * @author Christian Autermann
  */
-public class OwsAllowedValue implements OwsValueRestriction {
+public class OwsAllowedValue extends OwsValueRestriction {
 
     private final String value;
 
@@ -60,8 +56,13 @@ public class OwsAllowedValue implements OwsValueRestriction {
         return Objects.toStringHelper(this).addValue(this.value).toString();
     }
 
-    public static OwsAllowedValue of(ValueType xbValue) {
-        return new OwsAllowedValue(xbValue.getStringValue());
+    @Override
+    public OwsAllowedValue asValue() {
+        return this;
     }
 
+    @Override
+    public boolean isValue() {
+        return true;
+    }
 }

@@ -15,39 +15,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.github.autermann.wps.commons.description.ows;
+package com.github.autermann.wps.commons.description;
 
-
-
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
+
+import com.github.autermann.wps.commons.description.ows.OwsUOM;
+import com.google.common.base.Optional;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public class OwsAllowedValues implements Iterable<OwsValueRestriction> {
-    private static final OwsAllowedValues ANY = new OwsAllowedValues();
-    private final Set<OwsValueRestriction> restrictions = new HashSet<>();
+public interface LiteralDescription {
 
-    public void add(OwsValueRestriction restriction) {
-        this.restrictions.add(checkNotNull(restriction));
-    }
+    String getDataType();
 
-    @Override
-    public Iterator<OwsValueRestriction> iterator() {
-        return this.restrictions.iterator();
-    }
+    Optional<OwsUOM> getDefaultUOM();
 
-    public boolean isAny() {
-        return this.restrictions.isEmpty();
-    }
+    Set<OwsUOM> getUOMs();
 
-    public static OwsAllowedValues any() {
-        return ANY;
-    }
 }

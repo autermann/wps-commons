@@ -22,9 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Collections;
 import java.util.Set;
 
-import net.opengis.wps.x100.InputDescriptionType;
-import net.opengis.wps.x100.SupportedCRSsType;
-
+import com.github.autermann.wps.commons.description.BoundingBoxDescription;
 import com.github.autermann.wps.commons.description.ows.OwsCRS;
 import com.github.autermann.wps.commons.description.ows.OwsCodeType;
 import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
@@ -36,7 +34,8 @@ import com.google.common.collect.Sets;
  *
  * @author Christian Autermann
  */
-public class BoundingBoxInputDescription extends ProcessInputDescription {
+public class BoundingBoxInputDescription extends ProcessInputDescription
+        implements BoundingBoxDescription {
 
     private final Set<OwsCRS> supportedCrs;
     private final OwsCRS defaultCrs;
@@ -52,10 +51,12 @@ public class BoundingBoxInputDescription extends ProcessInputDescription {
         this.defaultCrs = defaultCrs;
     }
 
+    @Override
     public Set<OwsCRS> getSupportedCRS() {
         return Collections.unmodifiableSet(supportedCrs);
     }
 
+    @Override
     public Optional<OwsCRS> getDefaultCRS() {
         return Optional.fromNullable(this.defaultCrs);
     }
@@ -68,16 +69,5 @@ public class BoundingBoxInputDescription extends ProcessInputDescription {
     @Override
     public BoundingBoxInputDescription asBoundingBox() {
         return this;
-    }
-
-    public static BoundingBoxInputDescription of(InputDescriptionType idt) {
-        SupportedCRSsType boundingBoxData = idt.getBoundingBoxData();
-        return new BoundingBoxInputDescription(
-                OwsCodeType.of(idt.getIdentifier()),
-                OwsLanguageString.of(idt.getTitle()),
-                OwsLanguageString.of(idt.getAbstract()),
-                InputOccurence.of(idt),
-                OwsCRS.getDefault(boundingBoxData),
-                OwsCRS.getSupported(boundingBoxData));
     }
 }

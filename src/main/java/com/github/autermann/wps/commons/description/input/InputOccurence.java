@@ -17,9 +17,9 @@
  */
 package com.github.autermann.wps.commons.description.input;
 
-import java.math.BigInteger;
+import static com.google.common.base.Preconditions.checkArgument;
 
-import net.opengis.wps.x100.InputDescriptionType;
+import java.math.BigInteger;
 
 /**
  * TODO JavaDoc
@@ -34,6 +34,9 @@ public class InputOccurence {
     public InputOccurence(BigInteger min, BigInteger max) {
         this.min = min == null ? BigInteger.ONE : min;
         this.max = max == null ? BigInteger.ONE : max;
+        checkArgument(this.min.compareTo(BigInteger.ZERO) > 0, "non positive minimum");
+        checkArgument(this.max.compareTo(BigInteger.ZERO) > 0, "non positive maximum");
+        checkArgument(this.min.compareTo(this.max) <= 0, "minimum > maximum");
     }
 
     public BigInteger getMin() {
@@ -47,9 +50,5 @@ public class InputOccurence {
     public boolean isInBounds(BigInteger occurence) {
         return this.min.compareTo(occurence) >= 0 &&
                this.max.compareTo(occurence) <= 0;
-    }
-
-    public static InputOccurence of(InputDescriptionType idt) {
-        return new InputOccurence(idt.getMinOccurs(), idt.getMaxOccurs());
     }
 }

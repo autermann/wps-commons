@@ -22,9 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Collections;
 import java.util.Set;
 
-import net.opengis.wps.x100.LiteralOutputType;
-import net.opengis.wps.x100.OutputDescriptionType;
-
+import com.github.autermann.wps.commons.description.LiteralDescription;
 import com.github.autermann.wps.commons.description.ows.OwsCodeType;
 import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 import com.github.autermann.wps.commons.description.ows.OwsUOM;
@@ -36,7 +34,9 @@ import com.google.common.collect.Sets;
  *
  * @author Christian Autermann
  */
-public class LiteralOutputDescription extends ProcessOutputDescription {
+public class LiteralOutputDescription
+        extends ProcessOutputDescription
+        implements LiteralDescription {
 
     private final String dataType;
     private final Set<OwsUOM> uoms;
@@ -54,14 +54,17 @@ public class LiteralOutputDescription extends ProcessOutputDescription {
         this.uoms = Sets.newHashSet(checkNotNull(uoms));
     }
 
+    @Override
     public String getDataType() {
         return dataType;
     }
 
-    public Set<OwsUOM> getUoms() {
+    @Override
+    public Set<OwsUOM> getUOMs() {
         return Collections.unmodifiableSet(uoms);
     }
 
+    @Override
     public Optional<OwsUOM> getDefaultUOM() {
         return Optional.fromNullable(this.defaultUOM);
     }
@@ -75,16 +78,4 @@ public class LiteralOutputDescription extends ProcessOutputDescription {
     public boolean isLiteral() {
         return true;
     }
-
-    public static LiteralOutputDescription of(OutputDescriptionType odt) {
-        LiteralOutputType literalOutput = odt.getLiteralOutput();
-        return new LiteralOutputDescription(
-                OwsCodeType.of(odt.getIdentifier()),
-                OwsLanguageString.of(odt.getTitle()),
-                OwsLanguageString.of(odt.getAbstract()),
-                literalOutput.getDataType().getStringValue(),
-                OwsUOM.getDefault(literalOutput),
-                OwsUOM.getSupported(literalOutput));
-    }
-
 }

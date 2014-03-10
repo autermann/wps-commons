@@ -19,8 +19,6 @@ package com.github.autermann.wps.commons.description.ows;
 
 
 
-import net.opengis.ows.x11.RangeType;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -29,8 +27,11 @@ import com.google.common.base.Preconditions;
  * TODO JavaDoc
  * @author Christian Autermann
  */
-public class OwsAllowedRange implements OwsValueRestriction {
-
+public class OwsAllowedRange extends OwsValueRestriction {
+    public static final String CLOSED = "closed";
+    public static final String CLOSED_OPEN = "closed-open";
+    public static final String OPEN_CLOSED = "open-closed";
+    public static final String OPEN = "open";
     private final Bound lowerBound;
     private final Bound upperBound;
 
@@ -56,6 +57,32 @@ public class OwsAllowedRange implements OwsValueRestriction {
         return this.upperBound.getType();
     }
 
+    public String getType() {
+        if (getLowerBoundType() == BoundType.OPEN) {
+            if (getUpperBoundType() == BoundType.OPEN) {
+                return OPEN;
+            } else {
+                return OPEN_CLOSED;
+            }
+        } else {
+            if (getUpperBoundType() == BoundType.OPEN) {
+                return CLOSED_OPEN;
+            } else {
+                return CLOSED;
+            }
+        }
+    }
+
+    @Override
+    public OwsAllowedRange asRange() {
+        return this;
+    }
+
+    @Override
+    public boolean isRange() {
+        return true;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hashCode(this.lowerBound, this.upperBound);
@@ -76,43 +103,6 @@ public class OwsAllowedRange implements OwsValueRestriction {
         return Objects.toStringHelper(this)
                 .addValue(this.lowerBound.asLower() + ", " +
                           this.upperBound.asUpper()).toString();
-    }
-
-    public static OwsAllowedRange of(RangeType xbRange) {
-        String lower
-                = xbRange.isSetMaximumValue()
-                ? xbRange.getMinimumValue().getStringValue() : null;
-        String upper
-                = xbRange.isSetMaximumValue()
-                ? xbRange.getMaximumValue().getStringValue() : null;
-        String type = null;
-        if (xbRange.isSetRangeClosure() && !xbRange.getRangeClosure().isEmpty()) {
-            type = (String) xbRange.getRangeClosure().get(0);
-        }
-        if (type == null) {
-            type = "closed";
-        }
-        final BoundType upperType;
-        final BoundType lowerType;
-        switch (type) {
-            case "closed-open":
-                lowerType = BoundType.CLOSED;
-                upperType = BoundType.OPEN;
-                break;
-            case "open":
-                lowerType = BoundType.OPEN;
-                upperType = BoundType.OPEN;
-                break;
-            case "open-closed":
-                lowerType = BoundType.OPEN;
-                upperType = BoundType.CLOSED;
-                break;
-            case "closed":
-            default:
-                lowerType = BoundType.CLOSED;
-                upperType = BoundType.CLOSED;
-        }
-        return new OwsAllowedRange(lower, lowerType, upper, upperType);
     }
 
     private static class Bound {

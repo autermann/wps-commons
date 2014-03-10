@@ -22,13 +22,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Collections;
 import java.util.Set;
 
-import net.opengis.wps.x100.InputDescriptionType;
-import net.opengis.wps.x100.LiteralInputType;
-
+import com.github.autermann.wps.commons.description.LiteralDescription;
 import com.github.autermann.wps.commons.description.ows.OwsAllowedValues;
 import com.github.autermann.wps.commons.description.ows.OwsCodeType;
 import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 import com.github.autermann.wps.commons.description.ows.OwsUOM;
+import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 
 /**
@@ -36,7 +35,9 @@ import com.google.common.collect.Sets;
  *
  * @author Christian Autermann
  */
-public class LiteralInputDescription extends ProcessInputDescription {
+public class LiteralInputDescription
+        extends ProcessInputDescription
+        implements LiteralDescription {
 
     private final String dataType;
     private final Set<OwsUOM> uoms;
@@ -57,20 +58,23 @@ public class LiteralInputDescription extends ProcessInputDescription {
         this.defaultUom = defaultUom;
     }
 
+    @Override
     public String getDataType() {
-        return dataType;
+        return this.dataType;
     }
 
     public OwsAllowedValues getAllowedValues() {
-        return allowedValues;
+        return this.allowedValues;
     }
 
-    public Set<OwsUOM> getUoms() {
-        return Collections.unmodifiableSet(uoms);
+    @Override
+    public Set<OwsUOM> getUOMs() {
+        return Collections.unmodifiableSet(this.uoms);
     }
 
-    public OwsUOM getDefaultUom() {
-        return defaultUom;
+    @Override
+    public Optional<OwsUOM> getDefaultUOM() {
+        return Optional.fromNullable(this.defaultUom);
     }
 
     @Override
@@ -82,20 +86,4 @@ public class LiteralInputDescription extends ProcessInputDescription {
     public LiteralInputDescription asLiteral() {
         return this;
     }
-
-    public static LiteralInputDescription of(InputDescriptionType idt) {
-        LiteralInputType literalData = idt.getLiteralData();
-        return new LiteralInputDescription(
-                OwsCodeType.of(idt.getIdentifier()),
-                OwsLanguageString.of(idt.getTitle()),
-                OwsLanguageString.of(idt.getAbstract()),
-                InputOccurence.of(idt),
-                literalData.getDataType()
-                .getStringValue(),
-                OwsAllowedValues.of(literalData.getAllowedValues()),
-                OwsUOM.getDefault(literalData),
-                OwsUOM.getSupported(literalData));
-        // TODO inputDescription.getLiteralData().getValuesReference()
-    }
-
 }

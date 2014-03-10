@@ -17,16 +17,18 @@
  */
 package com.github.autermann.wps.commons.description.input;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Set;
 
-import net.opengis.wps.x100.InputDescriptionType;
-
 import com.github.autermann.wps.commons.Format;
+import com.github.autermann.wps.commons.description.ComplexDescription;
 import com.github.autermann.wps.commons.description.ows.OwsCodeType;
 import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
+import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 
 /**
@@ -34,26 +36,34 @@ import com.google.common.collect.Sets;
  *
  * @author Christian Autermann
  */
-public class ComplexInputDescription extends ProcessInputDescription {
+public class ComplexInputDescription extends ProcessInputDescription implements
+        ComplexDescription {
 
     private final Set<Format> formats;
     private final Format defaultFormat;
+    private final BigInteger maximumMegabytes;
 
     public ComplexInputDescription(OwsCodeType identifier,
                                    OwsLanguageString title,
                                    OwsLanguageString abstrakt,
                                    InputOccurence occurence,
                                    Format defaultFormat,
-                                   Iterable<Format> formats) {
+                                   Iterable<Format> formats,
+                                   BigInteger maximumMegabytes) {
         super(identifier, title, abstrakt, occurence);
         this.formats = Sets.newHashSet(checkNotNull(formats));
         this.defaultFormat = checkNotNull(defaultFormat);
+        checkArgument(maximumMegabytes == null ||
+                      maximumMegabytes.compareTo(BigInteger.ZERO) > 0);
+        this.maximumMegabytes = maximumMegabytes;
     }
 
+    @Override
     public Set<Format> getFormats() {
         return Collections.unmodifiableSet(formats);
     }
 
+    @Override
     public Format getDefaultFormat() {
         return defaultFormat;
     }
@@ -68,14 +78,7 @@ public class ComplexInputDescription extends ProcessInputDescription {
         return true;
     }
 
-    public static ComplexInputDescription of(InputDescriptionType idt) {
-        return new ComplexInputDescription(
-                OwsCodeType.of(idt.getIdentifier()),
-                OwsLanguageString.of(idt.getTitle()),
-                OwsLanguageString.of(idt.getAbstract()),
-                InputOccurence.of(idt),
-                Format.getDefault(idt),
-                Format.getSupported(idt));
+    public Optional<BigInteger> getMaximumMegabytes() {
+        return Optional.fromNullable(this.maximumMegabytes);
     }
-
 }

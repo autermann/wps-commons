@@ -74,6 +74,13 @@ public class OwsLanguageString {
                 .toString();
     }
 
+    public void encodeTo(LanguageStringType xb) {
+        if (getLang().isPresent()) {
+            xb.setLang(getLang().get());
+        }
+        xb.setStringValue(getValue());
+    }
+
     public static OwsLanguageString of(LanguageStringType xb) {
         if (xb == null) {
             return null;

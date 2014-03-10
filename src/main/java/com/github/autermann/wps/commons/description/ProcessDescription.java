@@ -17,59 +17,73 @@
  */
 package com.github.autermann.wps.commons.description;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.wps.x100.InputDescriptionType;
-import net.opengis.wps.x100.OutputDescriptionType;
-import net.opengis.wps.x100.ProcessDescriptionType;
-
-import com.github.autermann.wps.commons.Identifiable;
 import com.github.autermann.wps.commons.description.input.ProcessInputDescription;
 import com.github.autermann.wps.commons.description.output.ProcessOutputDescription;
 import com.github.autermann.wps.commons.description.ows.OwsCodeType;
+import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
+import com.google.common.base.Strings;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public class ProcessDescription implements Identifiable<OwsCodeType> {
+public class ProcessDescription extends AbstractDescription {
 
-    private final OwsCodeType identifier;
     private final Map<OwsCodeType, ProcessInputDescription> inputs;
     private final Map<OwsCodeType, ProcessOutputDescription> outputs;
     private final boolean storeSupported;
     private final boolean statusSupported;
+    private final String version;
 
-    public ProcessDescription(OwsCodeType identifier) {
-        this(identifier, false, false);
+    public ProcessDescription(OwsCodeType identifier,
+                              OwsLanguageString title,
+                              OwsLanguageString abstrakt,
+                              String version) {
+        this(identifier, title, abstrakt, version, false, false);
 
     }
 
     public ProcessDescription(OwsCodeType identifier,
+                              OwsLanguageString title,
+                              OwsLanguageString abstrakt,
+                              String version,
                               boolean storeSupported,
                               boolean statusSupported) {
+        super(identifier, title, abstrakt);
+        this.version = checkNotNull(Strings.emptyToNull(version));
         this.inputs = new HashMap<>();
         this.outputs = new HashMap<>();
-        this.identifier = identifier;
         this.storeSupported = storeSupported;
         this.statusSupported = statusSupported;
-    }
-
-    @Override
-    public OwsCodeType getID() {
-        return this.identifier;
     }
 
     public void addInput(ProcessInputDescription input) {
         this.inputs.put(input.getID(), input);
     }
 
+    public void addInputs(Iterable<? extends ProcessInputDescription> inputs) {
+        for (ProcessInputDescription input : inputs) {
+            addInput(input);
+        }
+    }
+
     public void addOutput(ProcessOutputDescription output) {
         this.outputs.put(output.getID(), output);
+    }
+
+    public void addOutputs(Iterable<? extends ProcessOutputDescription> outputs) {
+        for (ProcessOutputDescription output : outputs) {
+            addOutput(output);
+        }
     }
 
     public ProcessInputDescription getInput(OwsCodeType id) {
@@ -84,8 +98,16 @@ public class ProcessDescription implements Identifiable<OwsCodeType> {
         return Collections.unmodifiableSet(inputs.keySet());
     }
 
+    public Collection<ProcessInputDescription> getInputDescriptions() {
+        return Collections.unmodifiableCollection(inputs.values());
+    }
+
     public Set<OwsCodeType> getOutputs() {
         return Collections.unmodifiableSet(outputs.keySet());
+    }
+
+    public Collection<ProcessOutputDescription> getOutputDescriptions() {
+        return Collections.unmodifiableCollection(outputs.values());
     }
 
     public boolean isStoreSupported() {
@@ -96,16 +118,7 @@ public class ProcessDescription implements Identifiable<OwsCodeType> {
         return statusSupported;
     }
 
-    public static ProcessDescription of(ProcessDescriptionType xb) {
-        OwsCodeType id = OwsCodeType.of(xb.getIdentifier());
-        ProcessDescription pd = new ProcessDescription(id, xb
-                .getStoreSupported(), xb.getStatusSupported());
-        for (InputDescriptionType xbInputDescription : xb.getDataInputs().getInputArray()) {
-            pd.addInput(ProcessInputDescription.of(xbInputDescription));
-        }
-        for (OutputDescriptionType xbOutputDescription : xb.getProcessOutputs().getOutputArray()) {
-            pd.addOutput(ProcessOutputDescription.of(xbOutputDescription));
-        }
-        return pd;
+    public String getVersion() {
+        return version;
     }
 }
