@@ -33,6 +33,6 @@ public interface LiteralDescription {
 
     Optional<OwsUOM> getDefaultUOM();
 
-    Set<OwsUOM> getUOMs();
+    Set<OwsUOM> getSupportedUOM();
 
 }

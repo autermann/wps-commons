@@ -25,18 +25,16 @@ import java.util.List;
 import net.opengis.ows.x11.AllowedValuesDocument;
 import net.opengis.ows.x11.RangeType;
 import net.opengis.ows.x11.ValueType;
+import net.opengis.wps.x100.DescriptionType;
 import net.opengis.wps.x100.InputDescriptionType;
-import net.opengis.wps.x100.LiteralInputType;
-import net.opengis.wps.x100.LiteralOutputType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
-import net.opengis.wps.x100.SupportedCRSsType;
 
 import com.github.autermann.wps.commons.Format;
+import com.github.autermann.wps.commons.description.AbstractDescription;
 import com.github.autermann.wps.commons.description.ProcessDescription;
 import com.github.autermann.wps.commons.description.input.BoundingBoxInputDescription;
 import com.github.autermann.wps.commons.description.input.ComplexInputDescription;
-import com.github.autermann.wps.commons.description.input.InputOccurence;
 import com.github.autermann.wps.commons.description.input.LiteralInputDescription;
 import com.github.autermann.wps.commons.description.input.ProcessInputDescription;
 import com.github.autermann.wps.commons.description.output.BoundingBoxOutputDescription;
@@ -59,91 +57,95 @@ import com.github.autermann.wps.commons.description.ows.OwsUOM;
  */
 public class ProcessDescriptionDecoder {
     public ProcessDescription decodeProcessDescription(ProcessDescriptionType xb) {
-        ProcessDescription pd = new ProcessDescription(
-                OwsCodeType.of(xb.getIdentifier()),
-                OwsLanguageString.of(xb.getTitle()),
-                OwsLanguageString.of(xb.getAbstract()),
-                xb.getProcessVersion(),
-                xb.getStoreSupported(),
-                xb.getStatusSupported());
-        pd.addInputs(decodeProcessInputs(xb.getDataInputs()));
-        pd.addOutputs(decodeProcessOutputs(xb.getProcessOutputs()));
-        return pd;
+        return decodeAbstractDescription(newProcessDescriptionBuilder(xb), xb)
+                .withVersion(xb.getProcessVersion())
+                .statusSupported(xb.getStatusSupported())
+                .storeSupported(xb.getStoreSupported())
+                .withInput(decodeProcessInputs(xb.getDataInputs()))
+                .withOutput(decodeProcessOutputs(xb.getProcessOutputs()))
+                .build();
     }
 
-    protected List<ProcessInputDescription> decodeProcessInputs(ProcessDescriptionType.DataInputs xb) {
-        List<ProcessInputDescription> descriptions = new ArrayList<>(xb.getInputArray().length);
+    private List<ProcessInputDescription> decodeProcessInputs(
+            ProcessDescriptionType.DataInputs xb) {
+        List<ProcessInputDescription> descriptions = new ArrayList<>(xb
+                .getInputArray().length);
         for (InputDescriptionType xbInputDescription : xb.getInputArray()) {
             descriptions.add(decodeProcessInput(xbInputDescription));
         }
         return descriptions;
     }
 
-    protected List<ProcessOutputDescription> decodeProcessOutputs(ProcessDescriptionType.ProcessOutputs xb) {
-        List<ProcessOutputDescription> descriptions = new ArrayList<>(xb.getOutputArray().length);
+    private List<ProcessOutputDescription> decodeProcessOutputs(
+            ProcessDescriptionType.ProcessOutputs xb) {
+        List<ProcessOutputDescription> descriptions = new ArrayList<>(xb
+                .getOutputArray().length);
         for (OutputDescriptionType xbOutputDescription : xb.getOutputArray()) {
             descriptions.add(decodeProcessOutput(xbOutputDescription));
         }
         return descriptions;
     }
 
-    protected ProcessOutputDescription decodeProcessOutput(
+    private ProcessOutputDescription decodeProcessOutput(
             OutputDescriptionType odt) {
+        ProcessOutputDescription.Builder<?, ?> b;
         if (odt.getBoundingBoxOutput() != null) {
-            return decodeBoundingBoxOutputDescription(odt);
+            b = decodeBoundingBoxOutputDescription(odt);
         } else if (odt.getComplexOutput() != null) {
-            return decodeComplexOutputDescription(odt);
+            b = decodeComplexOutputDescription(odt);
         } else if (odt.getLiteralOutput() != null) {
-            return decodeLiteralOutputDescription(odt);
+            b = decodeLiteralOutputDescription(odt);
         } else {
             throw new IllegalArgumentException("Can not identify output type");
         }
+        return decodeAbstractDescription(b, odt).build();
     }
 
-    protected ProcessInputDescription decodeProcessInput(InputDescriptionType idt) {
+    private ProcessInputDescription decodeProcessInput(
+            InputDescriptionType idt) {
+        ProcessInputDescription.Builder<?, ?> b;
         if (idt.getBoundingBoxData() != null) {
-            return decodeBoundingBoxInputDescription(idt);
+            b = decodeBoundingBoxInputDescription(idt);
         } else if (idt.getLiteralData() != null) {
-            return decodeLiteralInputDescription(idt);
+            b = decodeLiteralInputDescription(idt);
         } else if (idt.getComplexData() != null) {
-            return decodeComplexInputDescription(idt);
+            b = decodeComplexInputDescription(idt);
         } else {
             throw new IllegalArgumentException("Can not identify input type");
         }
+        return decodeAbstractDescription(b, idt)
+                .withMinimalOccurence(idt.getMinOccurs())
+                .withMaximalOccurence(idt.getMaxOccurs())
+                .build();
     }
 
-    protected InputOccurence decodeInputOccurence(InputDescriptionType idt) {
-        return new InputOccurence(idt.getMinOccurs(), idt.getMaxOccurs());
+    private <B extends AbstractDescription.Builder<?, ? extends B>> B decodeAbstractDescription(
+            B b, DescriptionType idt) {
+        return b.withIdentifier(OwsCodeType.of(idt.getIdentifier()))
+                .withTitle(OwsLanguageString.of(idt.getTitle()))
+                .withAbstract(OwsLanguageString.of(idt.getAbstract()));
     }
 
-    protected BoundingBoxInputDescription decodeBoundingBoxInputDescription(
+    private BoundingBoxInputDescription.Builder<?, ?> decodeBoundingBoxInputDescription(
             InputDescriptionType idt) {
-        SupportedCRSsType boundingBoxData = idt.getBoundingBoxData();
-        return new BoundingBoxInputDescription(
-                OwsCodeType.of(idt.getIdentifier()),
-                OwsLanguageString.of(idt.getTitle()),
-                OwsLanguageString.of(idt.getAbstract()),
-                decodeInputOccurence(idt),
-                OwsCRS.getDefault(boundingBoxData),
-                OwsCRS.getSupported(boundingBoxData));
+        return newBoundingBoxInputDescriptionBuilder(idt)
+                .withDefaultCRS(OwsCRS.getDefault(idt.getBoundingBoxData()))
+                .withSupportedCRS(OwsCRS.getSupported(idt.getBoundingBoxData()));
     }
 
-    protected LiteralInputDescription decodeLiteralInputDescription(
+    private LiteralInputDescription.Builder<?, ?> decodeLiteralInputDescription(
             InputDescriptionType idt) {
-        LiteralInputType literalData = idt.getLiteralData();
-        return new LiteralInputDescription(
-                OwsCodeType.of(idt.getIdentifier()),
-                OwsLanguageString.of(idt.getTitle()),
-                OwsLanguageString.of(idt.getAbstract()),
-                decodeInputOccurence(idt),
-                literalData.getDataType().getStringValue(),
-                decodeOwsAllowedValues(literalData.getAllowedValues()),
-                OwsUOM.getDefault(literalData),
-                OwsUOM.getSupported(literalData));
-        // TODO inputDescription.getLiteralData().getValuesReference()
+        // TODO idt.getLiteralData().getValuesReference()
+        return newLiteralInputDescriptionBuilder(idt)
+                .withDataType(idt.getLiteralData().getDataType().getReference())
+                .withAllowedValues(decodeOwsAllowedValues(idt.getLiteralData()
+                                .getAllowedValues()))
+                .withDefaultUOM(OwsUOM.getDefault(idt.getLiteralData()))
+                .withSupportedUOM(OwsUOM.getSupported(idt.getLiteralData()));
+
     }
 
-    protected OwsAllowedValues decodeOwsAllowedValues(
+    private OwsAllowedValues decodeOwsAllowedValues(
             AllowedValuesDocument.AllowedValues xbAllowedValues) {
         if (xbAllowedValues == null ||
             (xbAllowedValues.getRangeArray().length == 0 &&
@@ -160,11 +162,11 @@ public class ProcessDescriptionDecoder {
         return owsAllowedValues;
     }
 
-    protected OwsAllowedValue decodeOwsAllowedValue(ValueType xbValue) {
+    private OwsAllowedValue decodeOwsAllowedValue(ValueType xbValue) {
         return new OwsAllowedValue(xbValue.getStringValue());
     }
 
-    protected OwsAllowedRange decodeOwsAllowedRange(RangeType xbRange) {
+    private OwsAllowedRange decodeOwsAllowedRange(RangeType xbRange) {
         String lower = xbRange.isSetMaximumValue()
                        ? xbRange.getMinimumValue().getStringValue() : null;
         String upper = xbRange.isSetMaximumValue()
@@ -199,48 +201,71 @@ public class ProcessDescriptionDecoder {
         return new OwsAllowedRange(lower, lowerType, upper, upperType);
     }
 
-    protected ComplexInputDescription decodeComplexInputDescription(
+    private ComplexInputDescription.Builder<?, ?> decodeComplexInputDescription(
             InputDescriptionType idt) {
-        return new ComplexInputDescription(
-                OwsCodeType.of(idt.getIdentifier()),
-                OwsLanguageString.of(idt.getTitle()),
-                OwsLanguageString.of(idt.getAbstract()),
-                decodeInputOccurence(idt),
-                Format.getDefault(idt),
-                Format.getSupported(idt),
-                idt.getComplexData().getMaximumMegabytes());
+        return newComplexInputDescriptionBuilder(idt)
+                .withDefaultFormat(Format.getDefault(idt))
+                .withSupportedFormat(Format.getSupported(idt))
+                .withMaximumMegabytes(idt.getComplexData().getMaximumMegabytes());
     }
 
-    protected LiteralOutputDescription decodeLiteralOutputDescription(
+    private LiteralOutputDescription.Builder<?, ?> decodeLiteralOutputDescription(
             OutputDescriptionType odt) {
-        LiteralOutputType literalOutput = odt.getLiteralOutput();
-        return new LiteralOutputDescription(
-                OwsCodeType.of(odt.getIdentifier()),
-                OwsLanguageString.of(odt.getTitle()),
-                OwsLanguageString.of(odt.getAbstract()),
-                literalOutput.getDataType().getReference(),
-                OwsUOM.getDefault(literalOutput),
-                OwsUOM.getSupported(literalOutput));
+        return newLiteralOutputDescriptionBuilder(odt)
+                .withDataType(odt.getLiteralOutput().getDataType()
+                        .getReference())
+                .withDefaultUOM(OwsUOM.getDefault(odt.getLiteralOutput()))
+                .withSupportedUOM(OwsUOM.getSupported(odt.getLiteralOutput()));
     }
 
-    protected ComplexOutputDescription decodeComplexOutputDescription(
+    private ComplexOutputDescription.Builder<?, ?> decodeComplexOutputDescription(
             OutputDescriptionType odt) {
-        return new ComplexOutputDescription(
-                OwsCodeType.of(odt.getIdentifier()),
-                OwsLanguageString.of(odt.getTitle()),
-                OwsLanguageString.of(odt.getAbstract()),
-                Format.getDefault(odt),
-                Format.getSupported(odt));
+        return newComplexOutputDescriptionBuilder(odt)
+                .withDefaultFormat(Format.getDefault(odt))
+                .withSupportedFormat(Format.getSupported(odt));
     }
 
-    protected BoundingBoxOutputDescription decodeBoundingBoxOutputDescription(
+    private BoundingBoxOutputDescription.Builder<?, ?> decodeBoundingBoxOutputDescription(
             OutputDescriptionType odt) {
-        SupportedCRSsType boundingBoxOutput = odt.getBoundingBoxOutput();
-        return new BoundingBoxOutputDescription(
-                OwsCodeType.of(odt.getIdentifier()),
-                OwsLanguageString.of(odt.getTitle()),
-                OwsLanguageString.of(odt.getAbstract()),
-                OwsCRS.getDefault(boundingBoxOutput),
-                OwsCRS.getSupported(boundingBoxOutput));
+        return newBoundingBoxOutputDescriptionBuilder(odt)
+                .withSupportedCRS(OwsCRS
+                        .getSupported(odt.getBoundingBoxOutput()))
+                .withDefaultCRS(OwsCRS.getDefault(odt.getBoundingBoxOutput()));
     }
+
+    protected ProcessDescription.Builder<?, ?> newProcessDescriptionBuilder(
+            ProcessDescriptionType xb) {
+        return ProcessDescription.builder();
+    }
+
+    protected BoundingBoxInputDescription.Builder<?, ?> newBoundingBoxInputDescriptionBuilder(
+            InputDescriptionType xb) {
+        return BoundingBoxInputDescription.builder();
+    }
+
+    protected ComplexInputDescription.Builder<?, ?> newComplexInputDescriptionBuilder(
+            InputDescriptionType xb) {
+        return ComplexInputDescription.builder();
+    }
+
+    protected LiteralInputDescription.Builder<?, ?> newLiteralInputDescriptionBuilder(
+            InputDescriptionType xb) {
+        return LiteralInputDescription.builder();
+    }
+
+    protected BoundingBoxOutputDescription.Builder<?, ?> newBoundingBoxOutputDescriptionBuilder(
+            OutputDescriptionType xb) {
+        return BoundingBoxOutputDescription.builder();
+    }
+
+    protected ComplexOutputDescription.Builder<?, ?> newComplexOutputDescriptionBuilder(
+            OutputDescriptionType xb) {
+        return ComplexOutputDescription.builder();
+    }
+
+    protected LiteralOutputDescription.Builder<?, ?> newLiteralOutputDescriptionBuilder(
+            OutputDescriptionType xb) {
+        return LiteralOutputDescription.builder();
+    }
+
 }

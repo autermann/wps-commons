@@ -17,11 +17,12 @@
  */
 package com.github.autermann.wps.commons.description.input;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.math.BigInteger;
+
 import com.github.autermann.wps.commons.description.AbstractDescription;
-import com.github.autermann.wps.commons.description.ows.OwsCodeType;
-import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 
 /**
  * TODO JavaDoc
@@ -32,12 +33,10 @@ public abstract class ProcessInputDescription extends AbstractDescription {
 
     private final InputOccurence occurence;
 
-    public ProcessInputDescription(OwsCodeType identifier,
-                                   OwsLanguageString title,
-                                   OwsLanguageString abstrakt,
-                                   InputOccurence occurence) {
-        super(identifier, title, abstrakt);
-        this.occurence = checkNotNull(occurence);
+    protected ProcessInputDescription(Builder<?, ?> builder) {
+        super(builder);
+        this.occurence = new InputOccurence(builder.getMinimalOccurence(),
+                                            builder.getMaximalOccurence());
     }
 
     public InputOccurence getOccurence() {
@@ -66,5 +65,55 @@ public abstract class ProcessInputDescription extends AbstractDescription {
 
     public BoundingBoxInputDescription asBoundingBox() {
         throw new UnsupportedOperationException();
+    }
+
+    public static abstract class Builder<T extends ProcessInputDescription, B extends Builder<T, B>>
+            extends AbstractDescription.Builder<T, B> {
+        private BigInteger minimalOccurence = BigInteger.ONE;
+        private BigInteger maximalOccurence = BigInteger.ONE;
+
+        @SuppressWarnings("unchecked")
+        public B withMinimalOccurence(BigInteger min) {
+            if (min != null) {
+                checkArgument(min.compareTo(BigInteger.ZERO) > 0, "minimalOccurence");
+                this.minimalOccurence = min;
+            } else {
+                this.minimalOccurence = BigInteger.ONE;
+            }
+            return (B) this;
+        }
+
+        public B withMinimalOccurence(long min) {
+            return withMinimalOccurence(BigInteger.valueOf(min));
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withMaximalOccurence(BigInteger max) {
+            if (max != null) {
+                checkArgument(max.compareTo(BigInteger.ZERO) > 0, "maximalOccurence");
+                this.maximalOccurence = max;
+            } else {
+                this.maximalOccurence = BigInteger.ONE;
+            }
+            return (B) this;
+        }
+
+        public B withMaximalOccurence(long max) {
+            return withMaximalOccurence(BigInteger.valueOf(max));
+        }
+
+        public B withOccurence(InputOccurence occurence) {
+            checkNotNull(occurence);
+            return withMaximalOccurence(occurence.getMax())
+                    .withMinimalOccurence(occurence.getMin());
+        }
+
+        private BigInteger getMinimalOccurence() {
+            return minimalOccurence;
+        }
+
+        private BigInteger getMaximalOccurence() {
+            return maximalOccurence;
+        }
     }
 }

@@ -19,17 +19,17 @@ package com.github.autermann.wps.commons.description;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import com.github.autermann.wps.commons.description.input.ProcessInputDescription;
 import com.github.autermann.wps.commons.description.output.ProcessOutputDescription;
 import com.github.autermann.wps.commons.description.ows.OwsCodeType;
-import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * TODO JavaDoc
@@ -44,46 +44,13 @@ public class ProcessDescription extends AbstractDescription {
     private final boolean statusSupported;
     private final String version;
 
-    public ProcessDescription(OwsCodeType identifier,
-                              OwsLanguageString title,
-                              OwsLanguageString abstrakt,
-                              String version) {
-        this(identifier, title, abstrakt, version, false, false);
-
-    }
-
-    public ProcessDescription(OwsCodeType identifier,
-                              OwsLanguageString title,
-                              OwsLanguageString abstrakt,
-                              String version,
-                              boolean storeSupported,
-                              boolean statusSupported) {
-        super(identifier, title, abstrakt);
-        this.version = checkNotNull(Strings.emptyToNull(version));
-        this.inputs = new HashMap<>();
-        this.outputs = new HashMap<>();
-        this.storeSupported = storeSupported;
-        this.statusSupported = statusSupported;
-    }
-
-    public void addInput(ProcessInputDescription input) {
-        this.inputs.put(input.getID(), input);
-    }
-
-    public void addInputs(Iterable<? extends ProcessInputDescription> inputs) {
-        for (ProcessInputDescription input : inputs) {
-            addInput(input);
-        }
-    }
-
-    public void addOutput(ProcessOutputDescription output) {
-        this.outputs.put(output.getID(), output);
-    }
-
-    public void addOutputs(Iterable<? extends ProcessOutputDescription> outputs) {
-        for (ProcessOutputDescription output : outputs) {
-            addOutput(output);
-        }
+    protected ProcessDescription(Builder<?, ?> builder) {
+        super(builder);
+        this.version = checkNotNull(builder.getVersion());
+        this.inputs = builder.getInputs().build();
+        this.outputs = builder.getOutputs().build();
+        this.storeSupported = builder.isStoreSupported();
+        this.statusSupported = builder.isStatusSupported();
     }
 
     public ProcessInputDescription getInput(OwsCodeType id) {
@@ -120,5 +87,109 @@ public class ProcessDescription extends AbstractDescription {
 
     public String getVersion() {
         return version;
+    }
+
+    public static Builder<?, ?> builder() {
+        return new BuilderImpl();
+    }
+
+    private static class BuilderImpl extends Builder<ProcessDescription, BuilderImpl> {
+        @Override
+        public ProcessDescription build() {
+            return new ProcessDescription(this);
+        }
+    }
+
+    public static abstract class Builder<T extends ProcessDescription, B extends Builder<T, B>>
+            extends AbstractDescription.Builder<T, B> {
+        private final ImmutableMap.Builder<OwsCodeType, ProcessInputDescription> inputs
+                = ImmutableMap.builder();
+        private final ImmutableMap.Builder<OwsCodeType, ProcessOutputDescription> outputs
+                = ImmutableMap.builder();
+        private boolean storeSupported = false;
+        private boolean statusSupported = false;
+        private String version;
+
+        @SuppressWarnings("unchecked")
+        public B withVersion(String version) {
+            this.version = checkNotNull(Strings.emptyToNull(version));
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B storeSupported(boolean storeSupported) {
+            this.storeSupported = storeSupported;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B statusSupported(boolean statusSupported) {
+            this.statusSupported = statusSupported;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withInput(ProcessInputDescription input) {
+            inputs.put(input.getID(), input);
+            return (B) this;
+        }
+
+        public B withInput(ProcessInputDescription.Builder<?, ?> input) {
+            return withInput(input.build());
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withInput(Iterable<ProcessInputDescription> inputs) {
+            for (ProcessInputDescription input : inputs) {
+                withInput(input);
+            }
+            return (B) this;
+        }
+
+        public B withInput(ProcessInputDescription... inputs) {
+            return withInput(Arrays.asList(inputs));
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withOutput(ProcessOutputDescription output) {
+            outputs.put(output.getID(), output);
+            return (B) this;
+        }
+
+        public B withOutput(ProcessOutputDescription.Builder<?, ?> output) {
+            return withOutput(output.build());
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withOutput(Iterable<ProcessOutputDescription> outputs) {
+            for (ProcessOutputDescription output : outputs) {
+                withOutput(output);
+            }
+            return (B) this;
+        }
+
+        public B withOutput(ProcessOutputDescription... outputs) {
+            return withOutput(Arrays.asList(outputs));
+        }
+
+        private ImmutableMap.Builder<OwsCodeType, ProcessInputDescription> getInputs() {
+            return inputs;
+        }
+
+        private ImmutableMap.Builder<OwsCodeType, ProcessOutputDescription> getOutputs() {
+            return outputs;
+        }
+
+        private boolean isStoreSupported() {
+            return storeSupported;
+        }
+
+        private boolean isStatusSupported() {
+            return statusSupported;
+        }
+
+        private String getVersion() {
+            return version;
+        }
     }
 }

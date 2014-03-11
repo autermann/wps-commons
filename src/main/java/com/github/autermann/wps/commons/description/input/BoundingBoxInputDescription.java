@@ -17,13 +17,10 @@
  */
 package com.github.autermann.wps.commons.description.input;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.Arrays;
 
 import com.github.autermann.wps.commons.description.BoundingBoxDescription;
 import com.github.autermann.wps.commons.description.ows.OwsCRS;
-import com.github.autermann.wps.commons.description.ows.OwsCodeType;
-import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
@@ -35,51 +32,23 @@ import com.google.common.collect.ImmutableSet;
 public class BoundingBoxInputDescription extends ProcessInputDescription
         implements BoundingBoxDescription {
 
-    private final Set<OwsCRS> supportedCrs;
-    private final OwsCRS defaultCrs;
+    private final ImmutableSet<OwsCRS> supportedCRS;
+    private final Optional<OwsCRS> defaultCRS;
 
-    public BoundingBoxInputDescription(OwsCodeType identifier,
-                                       OwsLanguageString title,
-                                       OwsLanguageString abstrakt,
-                                       InputOccurence occurence,
-                                       OwsCRS defaultCrs,
-                                       Iterable<OwsCRS> supportedCrs) {
-        super(identifier, title, abstrakt, occurence);
-        if (supportedCrs == null) {
-            if (defaultCrs == null) {
-                this.supportedCrs = Collections.emptySet();
-            } else {
-                this.supportedCrs = Collections.singleton(defaultCrs);
-            }
-        } else {
-            this.supportedCrs = ImmutableSet.copyOf(supportedCrs);
-        }
-        this.defaultCrs = defaultCrs;
-    }
-
-    public BoundingBoxInputDescription(OwsCodeType identifier,
-                                       OwsLanguageString title,
-                                       OwsLanguageString abstrakt,
-                                       InputOccurence occurence,
-                                       OwsCRS defaultCrs) {
-        this(identifier, title, abstrakt, occurence, defaultCrs, null);
-    }
-
-    public BoundingBoxInputDescription(OwsCodeType identifier,
-                                       OwsLanguageString title,
-                                       OwsLanguageString abstrakt,
-                                       InputOccurence occurence) {
-        this(identifier, title, abstrakt, occurence, null, null);
+    protected BoundingBoxInputDescription(Builder<?,?> builder) {
+        super(builder);
+        this.supportedCRS = builder.getSupportedCRS().build();
+        this.defaultCRS = Optional.fromNullable(builder.getDefaultCRS());
     }
 
     @Override
-    public Set<OwsCRS> getSupportedCRS() {
-        return Collections.unmodifiableSet(supportedCrs);
+    public ImmutableSet<OwsCRS> getSupportedCRS() {
+        return this.supportedCRS;
     }
 
     @Override
     public Optional<OwsCRS> getDefaultCRS() {
-        return Optional.fromNullable(this.defaultCrs);
+        return this.defaultCRS;
     }
 
     @Override
@@ -90,5 +59,65 @@ public class BoundingBoxInputDescription extends ProcessInputDescription
     @Override
     public BoundingBoxInputDescription asBoundingBox() {
         return this;
+    }
+
+    public static Builder<?,?> builder() {
+        return new BuilderImpl();
+    }
+
+    private static class BuilderImpl extends Builder<BoundingBoxInputDescription, BuilderImpl> {
+        @Override
+        public BoundingBoxInputDescription build() {
+            return new BoundingBoxInputDescription(this);
+        }
+    }
+
+    public static abstract class Builder<T extends BoundingBoxInputDescription, B extends Builder<T, B>>
+            extends ProcessInputDescription.Builder<T, B> {
+        private OwsCRS defaultCRS;
+        private final ImmutableSet.Builder<OwsCRS> supportedCRS = ImmutableSet.builder();
+
+        @SuppressWarnings("unchecked")
+        public B withDefaultCRS(OwsCRS defaultCRS) {
+            this.defaultCRS = defaultCRS;
+            return (B) this;
+        }
+
+        public B withDefaultCRS(String defaultCRS) {
+            return withDefaultCRS(defaultCRS == null ? null
+                                  : new OwsCRS(defaultCRS));
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withSupportedCRS(Iterable<OwsCRS> crss) {
+            for (OwsCRS crs : crss) {
+                withSupportedCRS(crs);
+            }
+            return (B) this;
+        }
+
+        public B withSupportedCRS(OwsCRS... crss) {
+            return withSupportedCRS(Arrays.asList(crss));
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withSupportedCRS(OwsCRS uom) {
+            if (uom != null) {
+                this.supportedCRS.add(uom);
+            }
+            return (B) this;
+        }
+
+        public B withSupportedCRS(String uom) {
+            return withSupportedCRS(uom == null ? null : new OwsCRS(uom));
+        }
+
+        private OwsCRS getDefaultCRS() {
+            return defaultCRS;
+        }
+
+        private ImmutableSet.Builder<OwsCRS> getSupportedCRS() {
+            return supportedCRS;
+        }
     }
 }

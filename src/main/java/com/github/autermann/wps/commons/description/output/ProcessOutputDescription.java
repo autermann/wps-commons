@@ -18,8 +18,6 @@
 package com.github.autermann.wps.commons.description.output;
 
 import com.github.autermann.wps.commons.description.AbstractDescription;
-import com.github.autermann.wps.commons.description.ows.OwsCodeType;
-import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 
 /**
  * TODO JavaDoc
@@ -28,10 +26,8 @@ import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
  */
 public abstract class ProcessOutputDescription extends AbstractDescription {
 
-    public ProcessOutputDescription(OwsCodeType identifier,
-                                    OwsLanguageString title,
-                                    OwsLanguageString abstrakt) {
-        super(identifier, title, abstrakt);
+    protected ProcessOutputDescription(Builder<?, ?> builder) {
+        super(builder);
     }
 
     public boolean isLiteral() {
@@ -58,4 +54,7 @@ public abstract class ProcessOutputDescription extends AbstractDescription {
         throw new UnsupportedOperationException();
     }
 
+    public static abstract class Builder<T extends ProcessOutputDescription, B extends Builder<T, B>>
+            extends AbstractDescription.Builder<T, B> {
+    }
 }

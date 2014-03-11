@@ -19,13 +19,10 @@ package com.github.autermann.wps.commons.description.output;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.Arrays;
 
 import com.github.autermann.wps.commons.Format;
 import com.github.autermann.wps.commons.description.ComplexDescription;
-import com.github.autermann.wps.commons.description.ows.OwsCodeType;
-import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -37,26 +34,18 @@ public class ComplexOutputDescription
         extends ProcessOutputDescription
         implements ComplexDescription {
 
-    private final Set<Format> formats;
+    private final ImmutableSet<Format> supportedFormats;
     private final Format defaultFormat;
 
-    public ComplexOutputDescription(OwsCodeType identifier,
-                                    OwsLanguageString title,
-                                    OwsLanguageString abstrakt,
-                                    Format defaultFormat,
-                                    Iterable<Format> formats) {
-        super(identifier, title, abstrakt);
-        this.defaultFormat = checkNotNull(defaultFormat);
-        if (formats == null) {
-            this.formats = Collections.singleton(defaultFormat);
-        } else {
-            this.formats = ImmutableSet.copyOf(formats);
-        }
+    protected ComplexOutputDescription(Builder<?,?> builder) {
+        super(builder);
+        this.defaultFormat = checkNotNull(builder.getDefaultFormat());
+        this.supportedFormats = builder.getSupportedFormats().build();
     }
 
     @Override
-    public Set<Format> getFormats() {
-        return Collections.unmodifiableSet(formats);
+    public ImmutableSet<Format> getSupportedFormats() {
+        return supportedFormats;
     }
 
     @Override
@@ -72,5 +61,61 @@ public class ComplexOutputDescription
     @Override
     public boolean isComplex() {
         return true;
+    }
+
+    public static Builder<?,?> builder() {
+        return new BuilderImpl();
+    }
+
+    private static class BuilderImpl extends Builder<ComplexOutputDescription, BuilderImpl> {
+
+        @Override
+        public ComplexOutputDescription build() {
+            return new ComplexOutputDescription(this);
+        }
+
+    }
+
+    public static abstract class Builder<T extends ComplexOutputDescription, B extends Builder<T, B>>
+            extends ProcessOutputDescription.Builder<T, B> {
+        private final ImmutableSet.Builder<Format> supportedFormats = ImmutableSet.builder();
+        private Format defaultFormat;
+
+        @SuppressWarnings("unchecked")
+        public B withDefaultFormat(Format format) {
+            this.defaultFormat = checkNotNull(format);
+            this.supportedFormats.add(format);
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withSupportedFormat(Format format) {
+            if (format != null) {
+                this.supportedFormats.add(format);
+            }
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withSupportedFormat(Iterable<Format> formats) {
+            if (formats != null) {
+                for (Format format : formats) {
+                    withSupportedFormat(format);
+                }
+            }
+            return (B) this;
+        }
+
+        public B withSupportedFormat(Format... formats) {
+            return withSupportedFormat(Arrays.asList(formats));
+        }
+
+        private ImmutableSet.Builder<Format> getSupportedFormats() {
+            return supportedFormats;
+        }
+
+        private Format getDefaultFormat() {
+            return defaultFormat;
+        }
     }
 }

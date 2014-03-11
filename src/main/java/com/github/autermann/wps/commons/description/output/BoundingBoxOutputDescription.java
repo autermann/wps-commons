@@ -17,13 +17,10 @@
  */
 package com.github.autermann.wps.commons.description.output;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.Arrays;
 
 import com.github.autermann.wps.commons.description.BoundingBoxDescription;
 import com.github.autermann.wps.commons.description.ows.OwsCRS;
-import com.github.autermann.wps.commons.description.ows.OwsCodeType;
-import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
@@ -36,41 +33,23 @@ public class BoundingBoxOutputDescription
         extends ProcessOutputDescription
         implements BoundingBoxDescription {
 
-    private final Set<OwsCRS> supportedCRS;
-    private final OwsCRS defaultCRS;
+    private final ImmutableSet<OwsCRS> supportedCRS;
+    private final Optional<OwsCRS> defaultCRS;
 
-    public BoundingBoxOutputDescription(OwsCodeType identifier,
-                                        OwsLanguageString title,
-                                        OwsLanguageString abstrakt,
-                                        OwsCRS defaultCRS,
-                                        Iterable<OwsCRS> supportedCRS) {
-        super(identifier, title, abstrakt);
-        if (supportedCRS == null) {
-            if (defaultCRS == null) {
-                this.supportedCRS = Collections.emptySet();
-            } else {
-                this.supportedCRS = Collections.singleton(defaultCRS);
-            }
-        } else {
-            this.supportedCRS = ImmutableSet.copyOf(supportedCRS);
-        }
-        this.defaultCRS = defaultCRS;
-    }
-
-    public BoundingBoxOutputDescription(OwsCodeType identifier,
-                                        OwsLanguageString title,
-                                        OwsLanguageString abstrakt) {
-        this(identifier, title, abstrakt, null, null);
+    protected BoundingBoxOutputDescription(Builder<?, ?> builder) {
+        super(builder);
+        this.supportedCRS = builder.getSupportedCRS().build();
+        this.defaultCRS = Optional.fromNullable(builder.getDefaultCRS());
     }
 
     @Override
-    public Set<OwsCRS> getSupportedCRS() {
-        return Collections.unmodifiableSet(supportedCRS);
+    public ImmutableSet<OwsCRS> getSupportedCRS() {
+        return this.supportedCRS;
     }
 
     @Override
     public Optional<OwsCRS> getDefaultCRS() {
-        return Optional.fromNullable(this.defaultCRS);
+        return this.defaultCRS;
     }
 
     @Override
@@ -82,4 +61,67 @@ public class BoundingBoxOutputDescription
     public boolean isBoundingBox() {
         return true;
     }
+
+    public static Builder<?, ?> builder() {
+        return new BuilderImpl();
+    }
+
+    private static class BuilderImpl extends Builder<BoundingBoxOutputDescription, BuilderImpl> {
+
+        @Override
+        public BoundingBoxOutputDescription build() {
+            return new BoundingBoxOutputDescription(this);
+        }
+    }
+
+    public static abstract class Builder<T extends BoundingBoxOutputDescription, B extends Builder<T, B>>
+            extends ProcessOutputDescription.Builder<T, B> {
+        private OwsCRS defaultCRS;
+        private ImmutableSet.Builder<OwsCRS> supportedCRS = ImmutableSet
+                .builder();
+
+        @SuppressWarnings("unchecked")
+        public B withDefaultCRS(OwsCRS defaultCRS) {
+            this.defaultCRS = defaultCRS;
+            return (B) this;
+        }
+
+        public B withDefaultCRS(String defaultCRS) {
+            return withDefaultCRS(defaultCRS == null ? null
+                                  : new OwsCRS(defaultCRS));
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withSupportedCRS(Iterable<OwsCRS> crss) {
+            for (OwsCRS crs : crss) {
+                withSupportedCRS(crs);
+            }
+            return (B) this;
+        }
+
+        public B withSupportedCRS(OwsCRS... crss) {
+            return withSupportedCRS(Arrays.asList(crss));
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withSupportedCRS(OwsCRS uom) {
+            if (uom != null) {
+                this.supportedCRS.add(uom);
+            }
+            return (B) this;
+        }
+
+        public B withSupportedCRS(String uom) {
+            return withSupportedCRS(uom == null ? null : new OwsCRS(uom));
+        }
+
+        private OwsCRS getDefaultCRS() {
+            return defaultCRS;
+        }
+
+        private ImmutableSet.Builder<OwsCRS> getSupportedCRS() {
+            return supportedCRS;
+        }
+    }
+
 }

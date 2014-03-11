@@ -19,12 +19,7 @@ package com.github.autermann.wps.commons.description.output;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collections;
-import java.util.Set;
-
 import com.github.autermann.wps.commons.description.LiteralDescription;
-import com.github.autermann.wps.commons.description.ows.OwsCodeType;
-import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 import com.github.autermann.wps.commons.description.ows.OwsUOM;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
@@ -40,42 +35,14 @@ public class LiteralOutputDescription
         implements LiteralDescription {
 
     private final String dataType;
-    private final Set<OwsUOM> uoms;
-    private final OwsUOM defaultUOM;
+    private final ImmutableSet<OwsUOM> supportedUOM;
+    private final Optional<OwsUOM> defaultUOM;
 
-    public LiteralOutputDescription(OwsCodeType identifier,
-                                    OwsLanguageString title,
-                                    OwsLanguageString abstrakt,
-                                    String dataType,
-                                    OwsUOM defaultUOM,
-                                    Iterable<OwsUOM> uoms) {
-        super(identifier, title, abstrakt);
-        this.dataType = checkNotNull(Strings.emptyToNull(dataType));
-        this.defaultUOM = defaultUOM;
-        if (uoms == null) {
-            if (defaultUOM == null) {
-                this.uoms = Collections.emptySet();
-            } else {
-                this.uoms = Collections.singleton(defaultUOM);
-            }
-        } else {
-            this.uoms = ImmutableSet.copyOf(uoms);
-        }
-    }
-
-    public LiteralOutputDescription(OwsCodeType identifier,
-                                    OwsLanguageString title,
-                                    OwsLanguageString abstrakt,
-                                    String dataType,
-                                    OwsUOM defaultUOM) {
-        this(identifier, title, abstrakt, dataType, defaultUOM, null);
-    }
-
-    public LiteralOutputDescription(OwsCodeType identifier,
-                                    OwsLanguageString title,
-                                    OwsLanguageString abstrakt,
-                                    String dataType) {
-        this(identifier, title, abstrakt, dataType, null, null);
+    protected LiteralOutputDescription(Builder<?, ?> builder) {
+        super(builder);
+        this.dataType = checkNotNull(builder.getDataType());
+        this.supportedUOM = builder.getSupportedUOM().build();
+        this.defaultUOM = Optional.fromNullable(builder.getDefaultUOM());
     }
 
     @Override
@@ -84,13 +51,13 @@ public class LiteralOutputDescription
     }
 
     @Override
-    public Set<OwsUOM> getUOMs() {
-        return Collections.unmodifiableSet(uoms);
+    public ImmutableSet<OwsUOM> getSupportedUOM() {
+        return this.supportedUOM;
     }
 
     @Override
     public Optional<OwsUOM> getDefaultUOM() {
-        return Optional.fromNullable(this.defaultUOM);
+        return this.defaultUOM;
     }
 
     @Override
@@ -101,5 +68,77 @@ public class LiteralOutputDescription
     @Override
     public boolean isLiteral() {
         return true;
+    }
+
+    public static Builder<?, ?> builder() {
+        return new BuilderImpl();
+    }
+
+    private static class BuilderImpl extends Builder<LiteralOutputDescription, BuilderImpl> {
+        @Override
+        public LiteralOutputDescription build() {
+            return new LiteralOutputDescription(this);
+        }
+    }
+
+    public static abstract class Builder<T extends LiteralOutputDescription, B extends Builder<T, B>>
+            extends ProcessOutputDescription.Builder<T, B> {
+        private String dataType;
+        private OwsUOM defaultUOM;
+        private ImmutableSet.Builder<OwsUOM> supportedUOM = ImmutableSet
+                .builder();
+
+        @SuppressWarnings("unchecked")
+        public B withDataType(String dataType) {
+            this.dataType = checkNotNull(Strings.emptyToNull(dataType));
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withDefaultUOM(OwsUOM defaultUOM) {
+            this.defaultUOM = defaultUOM;
+            return (B) this;
+        }
+
+        public B withDefaultUOM(String defaultUOM) {
+            return withDefaultUOM(defaultUOM == null ? null
+                                  : new OwsUOM(defaultUOM));
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withSupportedUOM(Iterable<OwsUOM> uoms) {
+            for (OwsUOM uom : uoms) {
+                withSupportedUOM(uom);
+            }
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withSupportedUOM(OwsUOM uom) {
+            if (uom != null) {
+                this.supportedUOM.add(uom);
+            }
+            return (B) this;
+        }
+
+        public B withSupportedUOM(String uom) {
+            return withSupportedUOM(uom == null ? null : new OwsUOM(uom));
+        }
+
+        public B withSupportedUOM(String ref, String uom) {
+            return withSupportedUOM(uom == null ? null : new OwsUOM(ref, uom));
+        }
+
+        private String getDataType() {
+            return dataType;
+        }
+
+        private OwsUOM getDefaultUOM() {
+            return defaultUOM;
+        }
+
+        private ImmutableSet.Builder<OwsUOM> getSupportedUOM() {
+            return supportedUOM;
+        }
     }
 }

@@ -30,6 +30,6 @@ public interface ComplexDescription {
 
     Format getDefaultFormat();
 
-    Set<Format> getFormats();
+    Set<Format> getSupportedFormats();
 
 }

@@ -120,16 +120,16 @@ public class ProcessDescriptionEncoder {
     protected void encodeLiteralDescription(LiteralDescription description,
                                           LiteralOutputType xbDescription) {
         xbDescription.addNewDataType().setReference(description.getDataType());
-        if (description.getDefaultUOM().isPresent() || !description.getUOMs()
+        if (description.getDefaultUOM().isPresent() || !description.getSupportedUOM()
                 .isEmpty()) {
             SupportedUOMsType xbUoms = xbDescription.addNewUOMs();
             if (description.getDefaultUOM().isPresent()) {
                 xbUoms.addNewDefault().addNewUOM().setStringValue(description
                         .getDefaultUOM().get().getValue());
             }
-            if (!description.getUOMs().isEmpty()) {
+            if (!description.getSupportedUOM().isEmpty()) {
                 UOMsType xbSupported = xbUoms.addNewSupported();
-                for (OwsUOM uom : description.getUOMs()) {
+                for (OwsUOM uom : description.getSupportedUOM()) {
                     xbSupported.addNewUOM().setStringValue(uom.getValue());
                 }
             }
@@ -164,10 +164,10 @@ public class ProcessDescriptionEncoder {
                                           SupportedComplexDataType xbDescription) {
         description.getDefaultFormat().encodeTo(xbDescription.addNewDefault()
                 .addNewFormat());
-        if (!description.getFormats().isEmpty()) {
+        if (!description.getSupportedFormats().isEmpty()) {
             ComplexDataCombinationsType supported
                     = xbDescription.addNewSupported();
-            for (Format format : description.getFormats()) {
+            for (Format format : description.getSupportedFormats()) {
                 format.encodeTo(supported.addNewFormat());
             }
         }

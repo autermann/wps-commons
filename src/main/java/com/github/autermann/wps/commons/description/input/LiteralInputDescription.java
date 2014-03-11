@@ -19,15 +19,12 @@ package com.github.autermann.wps.commons.description.input;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collections;
-import java.util.Set;
 
 import com.github.autermann.wps.commons.description.LiteralDescription;
 import com.github.autermann.wps.commons.description.ows.OwsAllowedValues;
-import com.github.autermann.wps.commons.description.ows.OwsCodeType;
-import com.github.autermann.wps.commons.description.ows.OwsLanguageString;
 import com.github.autermann.wps.commons.description.ows.OwsUOM;
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -40,58 +37,16 @@ public class LiteralInputDescription
         implements LiteralDescription {
 
     private final String dataType;
-    private final Set<OwsUOM> uoms;
-    private final OwsUOM defaultUOM;
+    private final ImmutableSet<OwsUOM> supportedUOM;
+    private final Optional<OwsUOM> defaultUOM;
     private final OwsAllowedValues allowedValues;
 
-    public LiteralInputDescription(OwsCodeType identifier,
-                                   OwsLanguageString title,
-                                   OwsLanguageString abstrakt,
-                                   InputOccurence occurence,
-                                   String dataType,
-                                   OwsAllowedValues allowedValues,
-                                   OwsUOM defaultUOM, Iterable<OwsUOM> uoms) {
-        super(identifier, title, abstrakt, occurence);
-        this.dataType = checkNotNull(dataType);
-        this.allowedValues = checkNotNull(allowedValues);
-        if (uoms == null) {
-            if (defaultUOM == null) {
-                this.uoms = Collections.emptySet();
-            } else {
-                this.uoms = Collections.singleton(defaultUOM);
-            }
-        } else {
-            this.uoms = ImmutableSet.copyOf(uoms);
-        }
-        this.defaultUOM = defaultUOM;
-    }
-
-    public LiteralInputDescription(OwsCodeType identifier,
-                                   OwsLanguageString title,
-                                   OwsLanguageString abstrakt,
-                                   InputOccurence occurence,
-                                   String dataType,
-                                   OwsAllowedValues allowedValues,
-                                   OwsUOM defaultUOM) {
-        this(identifier, title, abstrakt, occurence, dataType, allowedValues, defaultUOM, null);
-    }
-
-    public LiteralInputDescription(OwsCodeType identifier,
-                                   OwsLanguageString title,
-                                   OwsLanguageString abstrakt,
-                                   InputOccurence occurence,
-                                   String dataType,
-                                   OwsAllowedValues allowedValues) {
-        this(identifier, title, abstrakt, occurence, dataType, allowedValues, null, null);
-    }
-
-    public LiteralInputDescription(OwsCodeType identifier,
-                                   OwsLanguageString title,
-                                   OwsLanguageString abstrakt,
-                                   InputOccurence occurence,
-                                   String dataType) {
-        this(identifier, title, abstrakt, occurence, dataType, OwsAllowedValues
-                .any(), null, null);
+    protected LiteralInputDescription(Builder<?,?> builder) {
+        super(builder);
+        this.dataType = checkNotNull(builder.getDataType());
+        this.allowedValues = checkNotNull(builder.getAllowedValues());
+        this.supportedUOM = builder.getSupportedUOM().build();
+        this.defaultUOM = Optional.fromNullable(builder.getDefaultUOM());
     }
 
     @Override
@@ -104,13 +59,13 @@ public class LiteralInputDescription
     }
 
     @Override
-    public Set<OwsUOM> getUOMs() {
-        return Collections.unmodifiableSet(this.uoms);
+    public ImmutableSet<OwsUOM> getSupportedUOM() {
+        return this.supportedUOM;
     }
 
     @Override
     public Optional<OwsUOM> getDefaultUOM() {
-        return Optional.fromNullable(this.defaultUOM);
+        return this.defaultUOM;
     }
 
     @Override
@@ -121,5 +76,87 @@ public class LiteralInputDescription
     @Override
     public LiteralInputDescription asLiteral() {
         return this;
+    }
+
+    public static Builder<?,?> builder() {
+        return new BuilderImpl();
+    }
+
+    private static class BuilderImpl extends Builder<LiteralInputDescription, BuilderImpl> {
+        @Override
+        public LiteralInputDescription build() {
+            return new LiteralInputDescription(this);
+        }
+    }
+
+    public static abstract class Builder<T extends LiteralInputDescription, B extends Builder<T, B>>
+            extends ProcessInputDescription.Builder<T, B> {
+        private String dataType;
+        private OwsAllowedValues allowedValues = OwsAllowedValues.any();
+        private OwsUOM defaultUOM;
+        private final ImmutableSet.Builder<OwsUOM> supportedUOM = ImmutableSet.builder();
+
+        @SuppressWarnings("unchecked")
+        public B withDataType(String dataType) {
+            this.dataType = checkNotNull(Strings.emptyToNull(dataType));
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withAllowedValues(OwsAllowedValues allowedValues) {
+            this.allowedValues = checkNotNull(allowedValues, "allowedValues");
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withDefaultUOM(OwsUOM defaultUOM) {
+            this.defaultUOM = defaultUOM;
+            return (B) this;
+        }
+
+        public B withDefaultUOM(String defaultUOM) {
+            return withDefaultUOM(defaultUOM == null ? null
+                                  : new OwsUOM(defaultUOM));
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withSupportedUOM(Iterable<OwsUOM> uoms) {
+            for (OwsUOM uom : uoms) {
+                withSupportedUOM(uom);
+            }
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withSupportedUOM(OwsUOM uom) {
+            if (uom != null) {
+                this.supportedUOM.add(uom);
+            }
+            return (B) this;
+        }
+
+        public B withSupportedUOM(String uom) {
+            return withSupportedUOM(uom == null ? null : new OwsUOM(uom));
+        }
+
+        public B withSupportedUOM(String ref, String uom) {
+            return withSupportedUOM(uom == null ? null : new OwsUOM(ref, uom));
+        }
+
+        private String getDataType() {
+            return dataType;
+        }
+
+        private OwsAllowedValues getAllowedValues() {
+            return allowedValues;
+        }
+
+        private OwsUOM getDefaultUOM() {
+            return defaultUOM;
+        }
+
+        private ImmutableSet.Builder<OwsUOM> getSupportedUOM() {
+            return supportedUOM;
+        }
     }
 }
