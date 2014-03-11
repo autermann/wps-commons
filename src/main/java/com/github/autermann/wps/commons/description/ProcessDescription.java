@@ -130,7 +130,9 @@ public class ProcessDescription extends AbstractDescription {
 
         @SuppressWarnings("unchecked")
         public B withInput(ProcessInputDescription input) {
-            inputs.put(input.getID(), input);
+            if (input != null) {
+                inputs.put(input.getID(), input);
+            }
             return (B) this;
         }
 
@@ -152,7 +154,9 @@ public class ProcessDescription extends AbstractDescription {
 
         @SuppressWarnings("unchecked")
         public B withOutput(ProcessOutputDescription output) {
-            outputs.put(output.getID(), output);
+            if (output != null) {
+                outputs.put(output.getID(), output);
+            }
             return (B) this;
         }
 

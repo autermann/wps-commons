@@ -19,7 +19,6 @@ package com.github.autermann.wps.commons.description.input;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-
 import com.github.autermann.wps.commons.description.LiteralDescription;
 import com.github.autermann.wps.commons.description.ows.OwsAllowedValues;
 import com.github.autermann.wps.commons.description.ows.OwsUOM;
@@ -41,7 +40,7 @@ public class LiteralInputDescription
     private final Optional<OwsUOM> defaultUOM;
     private final OwsAllowedValues allowedValues;
 
-    protected LiteralInputDescription(Builder<?,?> builder) {
+    protected LiteralInputDescription(Builder<?, ?> builder) {
         super(builder);
         this.dataType = checkNotNull(builder.getDataType());
         this.allowedValues = checkNotNull(builder.getAllowedValues());
@@ -78,7 +77,12 @@ public class LiteralInputDescription
         return this;
     }
 
-    public static Builder<?,?> builder() {
+    @Override
+    public <T> T visit(ReturningVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    public static Builder<?, ?> builder() {
         return new BuilderImpl();
     }
 
@@ -94,7 +98,8 @@ public class LiteralInputDescription
         private String dataType;
         private OwsAllowedValues allowedValues = OwsAllowedValues.any();
         private OwsUOM defaultUOM;
-        private final ImmutableSet.Builder<OwsUOM> supportedUOM = ImmutableSet.builder();
+        private final ImmutableSet.Builder<OwsUOM> supportedUOM = ImmutableSet
+                .builder();
 
         @SuppressWarnings("unchecked")
         public B withDataType(String dataType) {

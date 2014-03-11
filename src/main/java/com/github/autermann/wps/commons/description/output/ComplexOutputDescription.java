@@ -37,7 +37,7 @@ public class ComplexOutputDescription
     private final ImmutableSet<Format> supportedFormats;
     private final Format defaultFormat;
 
-    protected ComplexOutputDescription(Builder<?,?> builder) {
+    protected ComplexOutputDescription(Builder<?, ?> builder) {
         super(builder);
         this.defaultFormat = checkNotNull(builder.getDefaultFormat());
         this.supportedFormats = builder.getSupportedFormats().build();
@@ -63,7 +63,12 @@ public class ComplexOutputDescription
         return true;
     }
 
-    public static Builder<?,?> builder() {
+    @Override
+    public <T> T visit(ReturningVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    public static Builder<?, ?> builder() {
         return new BuilderImpl();
     }
 
@@ -78,7 +83,8 @@ public class ComplexOutputDescription
 
     public static abstract class Builder<T extends ComplexOutputDescription, B extends Builder<T, B>>
             extends ProcessOutputDescription.Builder<T, B> {
-        private final ImmutableSet.Builder<Format> supportedFormats = ImmutableSet.builder();
+        private final ImmutableSet.Builder<Format> supportedFormats
+                = ImmutableSet.builder();
         private Format defaultFormat;
 
         @SuppressWarnings("unchecked")

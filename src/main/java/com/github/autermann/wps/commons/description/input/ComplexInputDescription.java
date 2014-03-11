@@ -40,11 +40,12 @@ public class ComplexInputDescription extends ProcessInputDescription implements
     private final Format defaultFormat;
     private final Optional<BigInteger> maximumMegabytes;
 
-    protected ComplexInputDescription(Builder<?,?> builder) {
+    protected ComplexInputDescription(Builder<?, ?> builder) {
         super(builder);
         this.defaultFormat = checkNotNull(builder.getDefaultFormat());
         this.supportedFormats = builder.getSupportedFormats().build();
-        this.maximumMegabytes = Optional.fromNullable(builder.getMaximumMegabytes());
+        this.maximumMegabytes = Optional.fromNullable(builder
+                .getMaximumMegabytes());
     }
 
     @Override
@@ -71,7 +72,12 @@ public class ComplexInputDescription extends ProcessInputDescription implements
         return this.maximumMegabytes;
     }
 
-    public static Builder<?,?> builder() {
+    @Override
+    public <T> T visit(ReturningVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    public static Builder<?, ?> builder() {
         return new BuilderImpl();
     }
 
@@ -84,7 +90,8 @@ public class ComplexInputDescription extends ProcessInputDescription implements
 
     public static abstract class Builder<T extends ComplexInputDescription, B extends Builder<T, B>>
             extends ProcessInputDescription.Builder<T, B> {
-        private final ImmutableSet.Builder<Format> supportedFormats = ImmutableSet.builder();
+        private final ImmutableSet.Builder<Format> supportedFormats
+                = ImmutableSet.builder();
         private Format defaultFormat;
         private BigInteger maximumMegabytes;
 

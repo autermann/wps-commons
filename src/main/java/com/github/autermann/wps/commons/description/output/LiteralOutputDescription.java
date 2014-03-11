@@ -70,6 +70,11 @@ public class LiteralOutputDescription
         return true;
     }
 
+    @Override
+    public <T> T visit(ReturningVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
     public static Builder<?, ?> builder() {
         return new BuilderImpl();
     }

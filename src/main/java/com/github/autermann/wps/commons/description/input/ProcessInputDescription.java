@@ -67,6 +67,29 @@ public abstract class ProcessInputDescription extends AbstractDescription {
         throw new UnsupportedOperationException();
     }
 
+    public abstract <T> T visit(
+            ReturningVisitor<T> visitor);
+
+    public void visit(Visitor visitor) {
+        visit(new VoidWrapper(visitor));
+    }
+
+    public interface Visitor {
+        void visit(BoundingBoxInputDescription input);
+
+        void visit(ComplexInputDescription input);
+
+        void visit(LiteralInputDescription input);
+    }
+
+    public interface ReturningVisitor<T> {
+        T visit(BoundingBoxInputDescription input);
+
+        T visit(ComplexInputDescription input);
+
+        T visit(LiteralInputDescription input);
+    }
+
     public static abstract class Builder<T extends ProcessInputDescription, B extends Builder<T, B>>
             extends AbstractDescription.Builder<T, B> {
         private BigInteger minimalOccurence = BigInteger.ONE;
@@ -114,6 +137,32 @@ public abstract class ProcessInputDescription extends AbstractDescription {
 
         private BigInteger getMaximalOccurence() {
             return maximalOccurence;
+        }
+    }
+
+    private static class VoidWrapper implements ReturningVisitor<Void> {
+        private final Visitor visitor;
+
+        VoidWrapper(Visitor visitor) {
+            this.visitor = visitor;
+        }
+
+        @Override
+        public Void visit(BoundingBoxInputDescription input) {
+            visitor.visit(input);
+            return null;
+        }
+
+        @Override
+        public Void visit(ComplexInputDescription input) {
+            visitor.visit(input);
+            return null;
+        }
+
+        @Override
+        public Void visit(LiteralInputDescription input) {
+            visitor.visit(input);
+            return null;
         }
     }
 }

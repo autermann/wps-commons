@@ -61,6 +61,11 @@ public class BoundingBoxInputDescription extends ProcessInputDescription
         return this;
     }
 
+    @Override
+    public <T> T visit(ReturningVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
     public static Builder<?,?> builder() {
         return new BuilderImpl();
     }
