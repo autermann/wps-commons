@@ -165,8 +165,7 @@ public class ProcessDescriptionEncoder {
         description.getDefaultFormat().encodeTo(xbDescription.addNewDefault()
                 .addNewFormat());
         if (!description.getSupportedFormats().isEmpty()) {
-            ComplexDataCombinationsType supported
-                    = xbDescription.addNewSupported();
+            ComplexDataCombinationsType supported = xbDescription.addNewSupported();
             for (Format format : description.getSupportedFormats()) {
                 format.encodeTo(supported.addNewFormat());
             }
