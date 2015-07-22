@@ -3,3 +3,5 @@
 .classpath
 .project
 nb-*.xml
+/standalone/target/
+/description/target/
