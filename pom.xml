@@ -1,11 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
 
     <groupId>com.github.autermann</groupId>
     <artifactId>wps-commons</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.0</version>
 
     <name>Common WPS classes</name>
     <description>Common classes to extend the 52N WPS.</description>
@@ -32,7 +31,7 @@
         <connection>scm:git:https://github.com/autermann/wps-commons.git</connection>
         <developerConnection>scm:git:https://github.com/autermann/wps-commons.git</developerConnection>
         <url>https://github.com/autermann/wps-commons</url>
-        <tag>HEAD</tag>
+        <tag>v2.0.0</tag>
     </scm>
 
     <issueManagement>
@@ -275,7 +274,7 @@
                         </goals>
                         <configuration>
                             <rules>
-                                <dependencyConvergence/>
+                                <dependencyConvergence />
                                 <!-- <reactorModuleConvergence /> -->
                                 <requireNoRepositories>
                                     <banRepositories>true</banRepositories>
@@ -285,7 +284,7 @@
                                     <allowedRepositories>
                                         <id>sonatype-nexus-snapshots</id>
                                     </allowedRepositories>
-                                    <allowedPluginRepositories></allowedPluginRepositories>
+                                    <allowedPluginRepositories />
                                 </requireNoRepositories>
                                 <requireJavaVersion>
                                     <version>[${java-version},)</version>
